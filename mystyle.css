@@ -1,19 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
 
 body  {
-    background-image: url('https://static.pexels.com/photos/414171/pexels-photo-414171.jpeg');
-  background-size:cover;
-        -webkit-animation: slidein 100s;
-        animation: slidein 100s;
+    background-image: url('https://zicxa.com/vi/hinh-anh/wp-content/uploads/2019/09/T%E1%BB%95ng-h%E1%BB%A3p-c%C3%A1c-h%C3%ACnh-%E1%BA%A3nh-l%C3%A0m-h%C3%ACnh-n%E1%BB%81n-m%C3%A0u-x%C3%A1m-%C4%91%E1%BA%B9p-nh%E1%BA%A5t-24-1.jpg');
+  background-size:cover;         
+}
 
-        -webkit-animation-fill-mode: forwards;
-        animation-fill-mode: forwards;
-
-        -webkit-animation-iteration-count: infinite;
-        animation-iteration-count: infinite;
-
-        -webkit-animation-direction: alternate;
-        animation-direction: alternate;              
+.centered {
+  text-align: center;
 }
 
 @-webkit-keyframes slidein {
@@ -40,11 +33,10 @@ to {background-position: -100px 0px;background-size:2750px;}
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(75, 75, 250, 0.3);
+  background: #787578;
   border-radius: 3px;
 }
 .center h1{
-  text-align:center;
   color:white;
   font-family: 'Source Code Pro', monospace;
   text-transform:uppercase;
