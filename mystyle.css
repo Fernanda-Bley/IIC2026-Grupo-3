@@ -1,43 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
-
-body  {
-    background-image: url('https://zicxa.com/vi/hinh-anh/wp-content/uploads/2019/09/T%E1%BB%95ng-h%E1%BB%A3p-c%C3%A1c-h%C3%ACnh-%E1%BA%A3nh-l%C3%A0m-h%C3%ACnh-n%E1%BB%81n-m%C3%A0u-x%C3%A1m-%C4%91%E1%BA%B9p-nh%E1%BA%A5t-24-1.jpg');
-  background-size:cover;         
-}
 
 .centered {
   text-align: center;
 }
 
-@-webkit-keyframes slidein {
-from {background-position: top; background-size:3000px; }
-to {background-position: -100px 0px;background-size:2750px;}
-}
-
-@keyframes slidein {
-from {background-position: top;background-size:3000px; }
-to {background-position: -100px 0px;background-size:2750px;}
-
-}
-
-
-
-.center
-{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  margin: auto;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: #787578;
-  border-radius: 3px;
-}
-.center h1{
-  color:white;
-  font-family: 'Source Code Pro', monospace;
-  text-transform:uppercase;
+#myMap {
+  width: 800px;
+  height: 600px;
 }
