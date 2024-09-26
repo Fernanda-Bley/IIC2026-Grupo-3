@@ -1,7 +1,7 @@
 // script.js
 var rows = [];
 
-// Initialize rows with countries and 0 alcohol consumption
+// Initialize rows with countries and 0 Smoking consumption
 var countries = [
     'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria',
     'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan',
@@ -25,7 +25,7 @@ var countries = [
     'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
 ];
 countries.forEach(function(country) {
- rows.push({ location: country, alcohol: 0 });
+ rows.push({ location: country, Smoking: 0 });
 });
 
 function unpack(rows, key) {
@@ -38,13 +38,17 @@ var data = [{
   type: 'choropleth',
   locationmode: 'country names',
   locations: unpack(rows, 'location'),
-  z: unpack(rows, 'alcohol'),
+  z: unpack(rows, 'Smoking'),
   text: unpack(rows, 'location'),
-  autocolorscale: true
+  colorscale: 'diverging',
+  colorbar: {
+    title: 'Número de fumadores'
+  },
+  autocolorscale: false
 }];
 
 var layout = {
-  title: 'Fumadores per capita',
+  title: 'Fumadores',
   geo: {
     projection: {
       type: 'robinson'
