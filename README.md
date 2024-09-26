@@ -7,7 +7,7 @@
 cómo los procesaste, si es que los procesaste? Describe el razonamiento detrás de esta 
 visualización.*
 
-> Escribiremos la respuesta aquí
+> Queremos encontrar el año donde se encuentra la mayor cantidad de fumadores diarios y expresarlo en un mapa donde mostramos el total de fumadores diarios por país. Para tratar los datos: Crear Jupyter para limpiar el DataSet, encontramos el año con más fumadores totales y buscamos una buena escala de colores.
 
 ### Implementación (50%)
 *Proporciona el enlace a la página web de la visualización (por ejemplo, GitHub Pages).*
