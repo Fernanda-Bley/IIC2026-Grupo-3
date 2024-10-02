@@ -1,191 +1,92 @@
-console.error = function(message) {
-  // Ignore the violation if it's the Plotly warning
-  if (message.includes("plotly-2.34.0.min.js:8 [Violation]Added non-passive event listener to a scroll-blocking 'wheel' event. Consider marking event handler as 'passive' to make the page more responsive. See ")) {
-    return;
-  }
-  // Otherwise, log the error as usual
-  console.log(message);
-};
-rows = [];
+// Main function to initiate the entire process
+function main() {
+  loadCSVData('./InvestigacionMaximos/data/Population-Smokers-1997.csv')
+    .then((csvData) => {
+      processData(csvData);
+      const plotData = preparePlotData();
+      const mapLayout = prepareMapLayout();
+      renderMap(plotData, mapLayout);
+    })
+    .catch((error) => {
+      console.error('Error loading CSV:', error);
+    });
+}
 
-function unpack(rows, key) {
-  return rows.map(function(row) {
-    return row[key];
+// Helper function to extract a specific key's value from the dataset
+function extractData(dataArray, key) {
+  return dataArray.map(function (dataItem) {
+    return dataItem[key];
   });
 }
 
-// Read the CSV file
-// d3.csv("./InvestigacionMaximos/data/Population-Smokers-2010.csv", function(error, data) {
-//   if (error) {
-//     rows.push({
-//       "population": error['Population'],
-//       "country": error['Entity']
-//     })
+// Load the CSV file using d3
+function loadCSVData(csvFilePath) {
+  return d3.csv(csvFilePath, d3.autoType);
+}
 
-//     var data = [{
-//       type: 'choropleth',
-//       locationmode: 'country names',
-//       locations: unpack(rows, 'country'),
-//       z: unpack(rows, 'population'),
-//       text: unpack(rows, 'country'),
-//       hoverinfo: 'none',
-//       colorscale: [
-//     [0, '#F9E400'],
-//     [0.25, "#06D001"],
-//     [0.5, "#332FD0"],
-//     [0.75,'#AF47D2'],
-//     [1, '#F5004F']
-//     ],
-//       zmin: 10067,
-//       zmax: 2707862957      ,
-//       colorbar: {
-//         title: {
-//           text: "Fumadores"
-//         }
-//       },
-//       autocolorscale: false
-//     }];
-  
-      
-  
-//       // Create the layout
-//     var annotations = [];
-  
-//     var layout = {
-//       title: {
-//         text: 'Fumadores totales en el año 2010',
-//         x: 0.48,
-//         xanchor: 'center'
-//       },
-//       geo: {
-//         projection: {
-//         type: 'robinson'
-//         }
-//       },
-//       annotations: annotations
-//     };
-  
-//       // Call Plotly.newPlot outside of the d3.csv callback function
-//     plotMap(data, layout);
-    
+// Function to process the data and prepare it for plotting
+function processData(smokerData) {
+  smokerData.forEach((row) => {
+    countryData.push({
+      population: row['Population'],
+      country: row['Entity'],
+    });
+  });
+}
 
-//     return;
-//   }
-//   });
-
-// d3.csv("./InvestigacionMaximos/data/Population-Smokers-1997.csv", function(error, data) {
-//   if (error) {
-//     rows.push({
-//       "population": error['Population'],
-//       "country": error['Entity']
-//     })
-
-//     var data = [{
-//       type: 'choropleth',
-//       locationmode: 'country names',
-//       locations: unpack(rows, 'country'),
-//       z: unpack(rows, 'population'),
-//       text: unpack(rows, 'country'),
-//       hoverinfo: 'none',
-//       colorscale: [
-//     [0, '#F9E400'],
-//     [0.25, "#06D001"],
-//     [0.5, "#332FD0"],
-//     [0.75,'#AF47D2'],
-//     [1, '#F5004F']
-//     ],
-//       zmin: 10067,
-//       zmax: 2707862957      ,
-//       colorbar: {
-//         title: {
-//           text: "Fumadores"
-//         }
-//       },
-//       autocolorscale: false
-//     }];
-  
-      
-  
-//       // Create the layout
-//     var annotations = [];
-  
-//     var layout = {
-//       title: {
-//         text: 'Fumadores totales en el año 1997',
-//         x: 0.48,
-//         xanchor: 'center'
-//       },
-//       geo: {
-//         projection: {
-//         type: 'robinson'
-//         }
-//       },
-//       annotations: annotations
-//     };
-  
-//       // Call Plotly.newPlot outside of the d3.csv callback function
-//     plotMap(data, layout);
-    
-
-//     return;
-//   }
-//   });
-
-
-d3.csv("./InvestigacionMaximos/data/Population-Smokers-1997.csv", function(error, data) {
-  if (error) {
-    rows.push({
-    "population": 0,
-    "country": error['Entity']
-    })
-  }
-  var data = [{
-    type: 'choropleth',
-    locationmode: 'country names',
-    locations: unpack(rows, 'country'),
-    z: unpack(rows, 'population'),
-    text: unpack(rows, 'country'),
-    hoverinfo: 'none',
-    colorscale: [
-    [0, '#F9E400'],
-    [0.25, "#06D001"],
-    [0.5, "#332FD0"],
-    [0.75,'#AF47D2'],
-    [1, '#F5004F']
-    ],
-    zmin: 10067,
-    zmax: 2707862957      ,
-    colorbar: {
-      title: {
-        text: "Fumadores"
-      }
+// Function to prepare plot data for Plotly
+function preparePlotData() {
+  return [
+    {
+      type: 'choropleth',
+      locationmode: 'country names',
+      locations: extractData(countryData, 'country'),
+      z: extractData(countryData, 'population'),
+      text: extractData(countryData, 'country'),
+      hoverinfo: 'none',
+      colorscale: [
+        [0, '#F9E400'],
+        [0.25, '#06D001'],
+        [0.5, '#332FD0'],
+        [0.75, '#AF47D2'],
+        [1, '#F5004F'],
+      ],
+      zmin: 10067,
+      zmax: 2707862957,
+      colorbar: {
+        title: {
+          text: 'Smokers',
+        },
+      },
+      autocolorscale: false,
     },
-    autocolorscale: false
-  }];
-  
-  var annotations = [];
-      
-  var layout = {
+  ];
+}
+
+// Function to prepare the layout for the map
+function prepareMapLayout() {
+  return {
     title: {
-      text: 'Fumadores totales en el año XXXX',
+      text: 'Total Smokers in Year XXXX',
       x: 0.48,
-      xanchor: 'center'
+      xanchor: 'center',
     },
     geo: {
       projection: {
-        type: 'robinson'
-      }
+        type: 'robinson',
+      },
     },
-    annotations: annotations
+    annotations: [],
   };
-      
-          // Call Plotly.newPlot outside of the d3.csv callback function
-  plotMap(data, layout);
-  return;
-});
-
-
-// Define a function to plot the map
-function plotMap(data, layout) {
-  Plotly.newPlot("myDiv", data, layout, {showLink: false});
 }
+
+// Function to render the map using Plotly
+function renderMap(plotData, layout) {
+  Plotly.newPlot('myDiv', plotData, layout, { showLink: false });
+}
+
+// Global variable to hold the data for countries
+let countryData = [];
+
+// Call the main function to run the code
+main();
