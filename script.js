@@ -28,7 +28,7 @@ function loadCSVData(csvFilePath) {
 function processData(smokerData) {
   smokerData.forEach((row) => {
     countryData.push({
-      population: row['Population'],
+      population: row['Population']*row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
       country: row['Entity'],
     });
   });
