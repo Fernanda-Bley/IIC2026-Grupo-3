@@ -10,6 +10,16 @@ function main() {
     .catch((error) => {
       console.error('Error loading CSV:', error);
     });
+  // loadCSVData('./InvestigacionMaximos/data/Population-Smokers-2010.csv')
+  //   .then((csvData) => {
+  //     processData(csvData);
+  //     const plotData = preparePlotData();
+  //     const mapLayout = prepareMapLayout();
+  //     renderMap(plotData, mapLayout);
+  //   })
+  //   .catch((error) => {
+  //     console.error('Error loading CSV:', error);
+  //   });
 }
 
 // Helper function to extract a specific key's value from the dataset
@@ -28,6 +38,7 @@ function loadCSVData(csvFilePath) {
 function processData(smokerData) {
   smokerData.forEach((row) => {
     countryData.push({
+      // population: row['Population']*row['Prevalence of current tobacco use (% of adults)'],
       population: row['Population']*row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
       country: row['Entity'],
     });
@@ -68,8 +79,15 @@ function prepareMapLayout() {
   return {
     title: {
       text: 'Total Smokers in the year 1997',
-      x: 0.486,
+      // text: 'Total Smokers in the year 2010',
+      x: 0.47,
       xanchor: 'center',
+      y: 0.85,
+      font: {
+        size: 24, // increase the font size to your desired value
+        family: 'Arial, sans-serif', // optional: specify a font family
+        color: 'black', // optional: specify a font color
+      },
     },
     geo: {
       projection: {
@@ -77,6 +95,14 @@ function prepareMapLayout() {
       },
     },
     annotations: [],
+    width: 800, // adjust the width to your desired value
+    height: 600, // adjust the height to your desired value
+    margin: {
+      l: 50, // adjust the left margin to your desired value
+      r: 50, // adjust the right margin to your desired value
+      t: 50, // adjust the top margin to your desired value
+      b: 50, // adjust the bottom margin to your desired value
+    },
   };
 }
 
