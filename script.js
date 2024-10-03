@@ -67,8 +67,8 @@ function preparePlotData() {
 function prepareMapLayout() {
   return {
     title: {
-      text: 'Total Smokers in Year XXXX',
-      x: 0.48,
+      text: 'Total Smokers in the year 1997',
+      x: 0.486,
       xanchor: 'center',
     },
     geo: {
