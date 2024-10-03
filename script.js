@@ -39,7 +39,7 @@ function processData(smokerData) {
   smokerData.forEach((row) => {
     countryData.push({
       // population: row['Population']*row['Prevalence of current tobacco use (% of adults)'],
-      population: row['Population']*row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
+      population: row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
       country: row['Entity'],
     });
   });
@@ -56,14 +56,12 @@ function preparePlotData() {
       text: extractData(countryData, 'country'),
       hoverinfo: 'none',
       colorscale: [
-        [0, '#F9E400'],
-        [0.25, '#06D001'],
-        [0.5, '#332FD0'],
-        [0.75, '#AF47D2'],
-        [1, '#F5004F'],
+        [0, '#00CCDD'],
+        [0.5, '#E4B1F0'],
+        [1, '#433878'],
       ],
-      zmin: 10067,
-      zmax: 2707862957,
+      zmin: 3.2,
+      zmax: 50.0,
       colorbar: {
         title: {
           text: 'Smokers',
@@ -78,13 +76,13 @@ function preparePlotData() {
 function prepareMapLayout() {
   return {
     title: {
-      text: 'Total Smokers in the year 1997',
+      text: 'Daily Smokers in the year 1997 (per capita)',
       // text: 'Total Smokers in the year 2010',
       x: 0.47,
       xanchor: 'center',
       y: 0.85,
       font: {
-        size: 24, // increase the font size to your desired value
+        size: 19, // increase the font size to your desired value
         family: 'Arial, sans-serif', // optional: specify a font family
         color: 'black', // optional: specify a font color
       },
