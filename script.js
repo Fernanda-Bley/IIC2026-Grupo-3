@@ -1,4 +1,7 @@
 // Main function to initiate the entire process
+
+// El minimo es 
+
 function main() {
   loadCSVData('./InvestigacionMaximos/data/Population-Smokers-1997.csv')
     .then((csvData) => {
@@ -107,6 +110,108 @@ function prepareMapLayout() {
 // Function to render the map using Plotly
 function renderMap(plotData, layout) {
   Plotly.newPlot('myDiv', plotData, layout, { showLink: false });
+  
+  // Add the SVG element to the page
+  const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svgElement.setAttribute('width', '800');
+  svgElement.setAttribute('height', '600');
+  svgElement.setAttribute('style', 'position: absolute; z-index: 1; top: 0; left: 0;');
+  
+  const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  svgElement.appendChild(gElement);
+
+  const rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rectElement.setAttribute('x', '640.76667'); // adjust the x-coordinate to position the rectangle correctly
+  rectElement.setAttribute('y', '355.68667'); // adjust the y-coordinate to position the rectangle correctly
+  rectElement.setAttribute('width', '75'); // adjust the width of the rectangle
+  rectElement.setAttribute('height', '30'); // adjust the height of the rectangle
+  rectElement.setAttribute('fill', '#433878');
+  gElement.appendChild(rectElement);
+  
+  const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+  ellipseElement.setAttribute('stroke', '#000');
+  ellipseElement.setAttribute('ry', '16');
+  ellipseElement.setAttribute('rx', '30');
+  ellipseElement.setAttribute('id', 'svg_2');
+  ellipseElement.setAttribute('cy', '340.16667');
+  ellipseElement.setAttribute('cx', '680.99998');
+  ellipseElement.setAttribute('fill', 'none');
+  gElement.appendChild(ellipseElement);
+
+  
+
+  const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  textElement.setAttribute('xml:space', 'preserve');
+  textElement.setAttribute('text-anchor', 'start');
+  textElement.setAttribute('font-family', 'Noto Sans JP');
+  textElement.setAttribute('font-size', '12');
+  textElement.setAttribute('stroke-width', '0');
+  textElement.setAttribute('id', 'svg_3');
+  textElement.setAttribute('y', '365.66667');
+  textElement.setAttribute('x', '640.99998');
+  textElement.setAttribute('stroke', '#000');
+  textElement.setAttribute('fill', '#000000');
+  textElement.textContent = 'Most %:';
+  gElement.appendChild(textElement);
+
+  const name = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+  name.setAttribute('xml:space', 'preserve');
+  name.setAttribute('text-anchor', 'start');
+  name.setAttribute('stroke-width', '1');
+  name.setAttribute('id', 'svg_3');
+  name.setAttribute('y', '380.66667');
+  name.setAttribute('x', '653.99998');
+  name.setAttribute('stroke', '#000');
+  name.setAttribute('fill', '#000000');
+  name.textContent = 'Kiribari';
+  gElement.appendChild(name);
+
+  const rectElement2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+rectElement2.setAttribute('x', '290.66667'); // adjust the x-coordinate to position the rectangle correctly
+rectElement2.setAttribute('y', '310'); // adjust the y-coordinate to position the rectangle correctly
+rectElement2.setAttribute('width', '75'); // adjust the width of the rectangle
+rectElement2.setAttribute('height', '30'); // adjust the height of the rectangle
+rectElement2.setAttribute('fill', '#00CCDD');
+gElement.appendChild(rectElement2);
+
+const ellipseElement2 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+ellipseElement2.setAttribute('stroke', '#000');
+ellipseElement2.setAttribute('ry', '16');
+ellipseElement2.setAttribute('rx', '30');
+ellipseElement2.setAttribute('id', 'svg_2');
+ellipseElement2.setAttribute('cy', '299.66667');
+ellipseElement2.setAttribute('cx', '372.66667');
+ellipseElement2.setAttribute('fill', 'none');
+gElement.appendChild(ellipseElement2);
+
+const textElement2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+textElement2.setAttribute('xml:space', 'preserve');
+textElement2.setAttribute('text-anchor', 'start');
+textElement2.setAttribute('font-family', 'Noto Sans JP');
+textElement2.setAttribute('font-size', '12');
+textElement2.setAttribute('stroke-width', '0');
+textElement2.setAttribute('id', 'svg_3');
+textElement2.setAttribute('y', '319.66667');
+textElement2.setAttribute('x', '292.66667');
+textElement2.setAttribute('stroke', '#000');
+textElement2.setAttribute('fill', '#000000');
+textElement2.textContent = 'Least %:';
+gElement.appendChild(textElement2);
+
+const name2 = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+name2.setAttribute('xml:space', 'preserve');
+name2.setAttribute('text-anchor', 'start');
+name2.setAttribute('stroke-width', '1');
+name2.setAttribute('id', 'svg_3');
+name2.setAttribute('y', '335.66667');
+name2.setAttribute('x', '307.66667');
+name2.setAttribute('stroke', '#000');
+name2.setAttribute('fill', '#000000');
+name2.textContent = 'STP';
+gElement.appendChild(name2);
+
+  // Add the SVG element to the page
+  document.getElementById('myDiv').appendChild(svgElement);
 }
 
 // Global variable to hold the data for countries
