@@ -155,7 +155,7 @@ function renderMap(plotData, layout) {
   textElement.setAttribute('x', '634.99998');
   textElement.setAttribute('stroke', '#000');
   textElement.setAttribute('fill', '#000000');
-  textElement.textContent = 'Most %:';
+  textElement.textContent = 'Mayor %:';
   gElement.appendChild(textElement);
 
   const name = document.createElementNS('http://www.w3.org/2000/svg', 'text')
@@ -199,7 +199,7 @@ textElement2.setAttribute('y', '319.66667');
 textElement2.setAttribute('x', '292.66667');
 textElement2.setAttribute('stroke', '#000');
 textElement2.setAttribute('fill', '#000000');
-textElement2.textContent = 'Least %:';
+textElement2.textContent = 'Menor %:';
 gElement.appendChild(textElement2);
 
 const name2 = document.createElementNS('http://www.w3.org/2000/svg', 'text')
