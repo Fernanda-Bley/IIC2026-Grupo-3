@@ -18,9 +18,10 @@ visualización.*
 *Describe cómo evaluaste la visualización: ¿la mostraste a alguien (por ejemplo, amigos, 
 compañeros, usuarios)? ¿Cuál fue la retroalimentación recibida?*
 
-> La evaluación que aplicamos fue presentarlo a distintos amigo y familiares para hacerle preguntas. Ver si eran capaces de reconocer el mayor, menor y como clasificar un país. Algunas de las criticas que recibimos fue como es que aplicar muchos colores podría ser confuso, así que lo disminuimos a 3, agregamos circulos para destacar el que tiene más o menos fumadores que eran dificiles de encontrar 
+> La evaluación que aplicamos fue presentarlo a distintos amigo y familiares para hacerle preguntas. Ver si eran capaces de reconocer el mayor, menor y como clasificar un país. Algunas de las criticas que recibimos fueron; el tamaño del mapa y las letras era muy pequeño, indicar el máximo y minimo, además de disminuir la cantidad de colores. 
+
 
 ### Mejoramiento (10%)
 *Discute la retroalimentación recibida y las modificaciones realizadas en la visualización, si las hubo*
 
-> Escribiremos la respuesta aquí
+> Con la retroalimentación decidimos disminuir los colores de 5 a 3 así evitariamos una sobrecarga de colores, aumentamos las dimensiones del mapa para que así las personas con dificultades visuales lo pudieran ver y por último añadimos circulos e indicaciones de cual país tenía el mayor y menor porcentaje.
