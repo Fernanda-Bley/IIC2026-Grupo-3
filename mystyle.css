@@ -11,12 +11,12 @@
 p {
   position: absolute;
   bottom: 100px;
-  left: 37%;
+  left: 450px;
   transform: translateX(-50%);
 }
 
 h2 {
-  position: absolute;
+  position: relative;
   top: 5px; /* adjust the top position to your liking */
   left: 37%;
   transform: translateX(-50%);
