@@ -67,7 +67,7 @@ function preparePlotData() {
       zmax: 50.0,
       colorbar: {
         title: {
-          text: 'Smokers',
+          text: 'Fumadores',
         },
       },
       autocolorscale: false,
@@ -79,7 +79,7 @@ function preparePlotData() {
 function prepareMapLayout() {
   return {
     title: {
-      text: 'Daily Smokers in the year 1997 (per capita)',
+      text: 'Fumadores diarios en 1997 (per capita)',
       // text: 'Total Smokers in the year 2010',
       x: 0.47,
       xanchor: 'center',
@@ -109,6 +109,10 @@ function prepareMapLayout() {
 
 // Function to render the map using Plotly
 function renderMap(plotData, layout) {
+  const myDiv = document.getElementById('myDiv');
+  myDiv.style.position = 'absolute';
+  
+  myDiv.style.left = '62px';
   Plotly.newPlot('myDiv', plotData, layout, { showLink: false });
   
   // Add the SVG element to the page
@@ -121,7 +125,7 @@ function renderMap(plotData, layout) {
   svgElement.appendChild(gElement);
 
   const rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  rectElement.setAttribute('x', '640.76667'); // adjust the x-coordinate to position the rectangle correctly
+  rectElement.setAttribute('x', '630.76667'); // adjust the x-coordinate to position the rectangle correctly
   rectElement.setAttribute('y', '355.68667'); // adjust the y-coordinate to position the rectangle correctly
   rectElement.setAttribute('width', '75'); // adjust the width of the rectangle
   rectElement.setAttribute('height', '30'); // adjust the height of the rectangle
@@ -133,8 +137,8 @@ function renderMap(plotData, layout) {
   ellipseElement.setAttribute('ry', '16');
   ellipseElement.setAttribute('rx', '30');
   ellipseElement.setAttribute('id', 'svg_2');
-  ellipseElement.setAttribute('cy', '340.16667');
-  ellipseElement.setAttribute('cx', '680.99998');
+  ellipseElement.setAttribute('cy', '336.16667');
+  ellipseElement.setAttribute('cx', '670.99998');
   ellipseElement.setAttribute('fill', 'none');
   gElement.appendChild(ellipseElement);
 
@@ -148,7 +152,7 @@ function renderMap(plotData, layout) {
   textElement.setAttribute('stroke-width', '0');
   textElement.setAttribute('id', 'svg_3');
   textElement.setAttribute('y', '365.66667');
-  textElement.setAttribute('x', '640.99998');
+  textElement.setAttribute('x', '634.99998');
   textElement.setAttribute('stroke', '#000');
   textElement.setAttribute('fill', '#000000');
   textElement.textContent = 'Most %:';
@@ -160,7 +164,7 @@ function renderMap(plotData, layout) {
   name.setAttribute('stroke-width', '1');
   name.setAttribute('id', 'svg_3');
   name.setAttribute('y', '380.66667');
-  name.setAttribute('x', '653.99998');
+  name.setAttribute('x', '647.99998');
   name.setAttribute('stroke', '#000');
   name.setAttribute('fill', '#000000');
   name.textContent = 'Kiribari';
@@ -211,6 +215,7 @@ name2.textContent = 'STP';
 gElement.appendChild(name2);
 
   // Add the SVG element to the page
+  
   document.getElementById('myDiv').appendChild(svgElement);
 }
 
