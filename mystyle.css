@@ -10,11 +10,17 @@
 
 p {
   position: absolute;
-  bottom: 100px;
+  bottom: 40px;
   left: 450px;
   transform: translateX(-50%);
 }
 
+p2 {
+  position: absolute;
+  bottom: 410px;
+  left: 450px;
+  transform: translateX(-50%);
+}
 h2 {
   position: relative;
   top: 5px; /* adjust the top position to your liking */
