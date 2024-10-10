@@ -93,7 +93,11 @@ function prepareMapLayout() {
     geo: {
       projection: {
         type: 'robinson',
+        bordercolor: 'red', // add this line
+        borderwidth: 3, // add this line to specify the border width
       },
+      showframe: false, 
+      
     },
     annotations: [],
     width: 800, // adjust the width to your desired value
@@ -178,7 +182,7 @@ gElement.appendChild(arrowPoint);
 const rectElement2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 rectElement2.setAttribute('x', '290.66667'); // adjust the x-coordinate to position the rectangle correctly
 rectElement2.setAttribute('y', '390'); // adjust the y-coordinate to position the rectangle correctly
-rectElement2.setAttribute('width', '98'); // adjust the width of the rectangle
+rectElement2.setAttribute('width', '325'); // adjust the width of the rectangle
 rectElement2.setAttribute('height', '30'); // adjust the height of the rectangle
 rectElement2.setAttribute('fill', '#00CCDD');
 gElement.appendChild(rectElement2);
@@ -203,10 +207,10 @@ name2.setAttribute('text-anchor', 'start');
 name2.setAttribute('stroke-width', '1');
 name2.setAttribute('id', 'svg_3');
 name2.setAttribute('y', '415');
-name2.setAttribute('x', '325.66667');
+name2.setAttribute('x', '300.66667');
 name2.setAttribute('stroke', '#000');
 name2.setAttribute('fill', '#000000');
-name2.textContent = 'STP';
+name2.textContent = 'República Democrática de São Tomé e Príncipe';
 gElement.appendChild(name2);
 
   // Add the SVG element to the page
