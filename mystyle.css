@@ -13,10 +13,8 @@ body {
 }
 
 svg {
-  border: solid 2px rgb(0, 0, 0);
+  border: solid 1px rgb(0, 0, 0);
 }
-
-/* Main content area to fill available space */
 
 /* Footer always stays at the bottom */
 .site-footer {
@@ -34,8 +32,13 @@ svg {
   background-color: rgb(126, 138, 138);
 }
 
+.table {
+  flex: 1; /* Allow the table to take up available space */
+  margin-right: 20px; /* Add some space between the table and text */
+}
+
 .textStart {
-  text-align: start;
+  flex: 1; /* Allow the textStart to take up available space */
 }
 
 .textStart li {
@@ -50,7 +53,8 @@ svg {
 }
 
 #buttons {
-  margin-top: 20px;
+  margin-top: 3px;
+  margin-bottom: 10px;
 }
 
 #buttons button {
@@ -65,4 +69,12 @@ svg {
 
 #buttons button:hover {
   background-color: #007bff;
+}
+
+#additional-info {
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Spread the items apart */
+  align-items: flex-start; /* Align them at the top (same height) */
+  margin-top: 10px;
+  font-size: 14px;
 }

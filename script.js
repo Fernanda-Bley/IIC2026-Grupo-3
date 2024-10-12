@@ -5,10 +5,10 @@ const WIDTH_VIS = 1200;
 const HEIGHT_VIS = 250;
 
 const MARGIN = {
-  top: 50,
-  bottom: 50,
-  right: 50,
-  left: 50,
+  top: 10,
+  bottom: 10,
+  right: 10,
+  left: 10,
 };
 const HEIGHTVISINSIDE = HEIGHT_VIS - MARGIN.top - MARGIN.bottom;
 const WIDTHVISINSIDE = WIDTH_VIS - MARGIN.right - MARGIN.left;
@@ -21,6 +21,7 @@ function main() {
   loadCSVData('./InvestigacionMaximos/data/Population-Smokers-1997.csv')
     .then((csvData) => {
       processData(csvData);
+      console.log(countryData);
       const plotData = preparePlotData();
       const mapLayout = prepareMapLayout();
       renderMap(plotData, mapLayout);
@@ -44,15 +45,26 @@ function loadCSVData(csvFilePath) {
 function processData(smokerData) {
   smokerData.forEach((row) => {
     countryData.push({
-      population: row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
+      prevalence: row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
       country: row['Entity'],
+      population: row['Population'],
+      code: row['Code'],
+      year: row['Year'],
     });
   });
 }
 
 // Function to find the top 3 countries with the highest smoking prevalence
-function findTop3Countries() {
-  return countryData.sort((a, b) => b.population - a.population).slice(0, 3);
+function findTop3CountriesPrevalence() {
+  const top3 = countryData
+    .sort((a, b) => b.prevalence - a.prevalence)
+    .slice(0, 3);
+  console.log(top3);
+  return top3;
+}
+
+function findTop5ByPopulation() {
+  return countryData.sort((a, b) => b.population - a.population).slice(0, 5); // Get the top 5 countries by population
 }
 
 // Function to prepare plot data for Plotly
@@ -62,7 +74,7 @@ function preparePlotData() {
       type: 'choropleth',
       locationmode: 'country names',
       locations: extractData(countryData, 'country'),
-      z: extractData(countryData, 'population'),
+      z: extractData(countryData, 'prevalence'),
       text: extractData(countryData, 'country'),
       hoverinfo: 'location+z', // Show country and prevalence on hover
       colorscale: [
@@ -76,6 +88,34 @@ function preparePlotData() {
       autocolorscale: false,
     },
   ];
+}
+
+function renderBarPlot(top5Countries) {
+  const countries = top5Countries.map((country) => country.country);
+  const populations = top5Countries.map((country) => country.population);
+
+  const trace = {
+    x: countries,
+    y: populations,
+    type: 'bar',
+    text: populations.map(String), // Show population as hover text
+    marker: {
+      color: '#0096FF',
+    },
+  };
+
+  const layout = {
+    title: 'Top 5 Countries by Population',
+    xaxis: {
+      title: 'Country',
+    },
+    yaxis: {
+      title: 'Population',
+    },
+    margin: { t: 50, b: 50, l: 50, r: 50 },
+  };
+
+  Plotly.newPlot('vis2', [trace], layout);
 }
 
 // Function to prepare the layout for the map
@@ -98,14 +138,8 @@ function prepareMapLayout() {
 function renderMap(plotData, layout) {
   Plotly.newPlot('vis', plotData, layout, { showLink: false });
 
-  // Add a group for annotations
-  const g = SVG.append('g');
-
-  // Call the function to add prevalence annotations
-  addPrevalenceAnnotations(g);
-
   // Get the top 3 countries with the highest smoking prevalence
-  const top3Countries = findTop3Countries();
+  const top3Countries = findTop3CountriesPrevalence();
 
   // Add a table to display the top 3 countries
   addTop3Table(top3Countries);
@@ -115,6 +149,10 @@ function renderMap(plotData, layout) {
 
   // Add button event handlers
   addButtonEventHandlers();
+
+  // Render the bar plot for the top 5 countries by population
+  const top5ByPopulation = findTop5ByPopulation();
+  renderBarPlot(top5ByPopulation);
 }
 
 function addHoverInteraction() {
@@ -139,89 +177,12 @@ function addHoverInteraction() {
   });
 }
 
-// Function to add rectangles, arrows, and text annotations for prevalences
-function addPrevalenceAnnotations(g) {
-  // Add rectangle for highest prevalence
-  g.append('rect')
-    .attr('x', 595)
-    .attr('y', 270)
-    .attr('width', 100)
-    .attr('height', 30)
-    .attr('fill', '#0002A1');
-
-  // Add text annotation for highest prevalence
-  g.append('text')
-    .attr('x', 598)
-    .attr('y', 280)
-    .attr('font-size', 12)
-    .attr('fill', '#FFFFFF')
-    .text('Mayor prevaliencia:');
-
-  // Add country name for highest prevalence
-  g.append('text')
-    .attr('x', 620)
-    .attr('y', 295)
-    .attr('font-size', 12)
-    .attr('fill', '#FFFFFF')
-    .text('Kiribati');
-
-  // Add rectangle for lowest prevalence
-  g.append('rect')
-    .attr('x', 290)
-    .attr('y', 390)
-    .attr('width', 325)
-    .attr('height', 30)
-    .attr('fill', '#00CCDD');
-
-  // Add text annotation for lowest prevalence
-  g.append('text')
-    .attr('x', 292)
-    .attr('y', 400)
-    .attr('font-size', 12)
-    .attr('fill', '#000000')
-    .text('Menor prevalencia:');
-
-  // Add country name for lowest prevalence
-  g.append('text')
-    .attr('x', 300)
-    .attr('y', 415)
-    .attr('font-size', 12)
-    .attr('fill', '#000000')
-    .text('República Democrática de São Tomé e Príncipe');
-
-  // Add arrows using lines and polygons for pointers
-  g.append('line')
-    .attr('x1', 650)
-    .attr('y1', 300)
-    .attr('x2', 650)
-    .attr('y2', 320)
-    .attr('stroke', '#000')
-    .attr('stroke-width', 2);
-
-  g.append('polygon')
-    .attr('points', '650,320 660,310 640,310')
-    .attr('fill', '#000');
-
-  g.append('line')
-    .attr('x1', 370)
-    .attr('y1', 295)
-    .attr('x2', 301)
-    .attr('y2', 390)
-    .attr('stroke', '#000')
-    .attr('stroke-width', 2);
-
-  g.append('polygon')
-    .attr('points', '371,290 355,300 370,310')
-    .attr('fill', '#000');
-}
-
 // Function to add a table to display the top 3 countries with the highest smoking prevalence
 function addTop3Table(top3Countries) {
   const tableContainer = d3
-    .select('#vis')
+    .select('.table')
     .append('div')
     .attr('id', 'top3-table')
-    .style('position', 'absolute')
     .style('top', '650px')
     .style('left', '50px');
 
@@ -264,7 +225,7 @@ function addTop3Table(top3Countries) {
       .style('padding', '5px');
     row
       .append('td')
-      .text(country.population)
+      .text(country.prevalence)
       .style('border', '1px solid black')
       .style('padding', '5px');
   });
@@ -275,29 +236,27 @@ function addButtonEventHandlers() {
     name: 'Kiribati', // This is your highest prevalence country
     lat: 1.8709, // Approximate latitude of the country
     lon: 157.363, // Approximate longitude of the country
-    prevalence: 50.0, // Replace with the actual value from your dataset
+    prevalence: 50.0, // TODO: HARDCODED prevalence value
   };
 
   const lowestCountry = {
     name: 'República Democrática de São Tomé e Príncipe', // Lowest prevalence country
     lat: 0.18636, // Approximate latitude
     lon: 6.613081, // Approximate longitude
-    prevalence: 3.2, // Replace with the actual value from your dataset
+    prevalence: 3.2, // TODO: HARDCODED prevalence value
   };
 
+  const buttons = d3.select('#buttons');
+
   // Event for the "Highest Prevalence" button
-  document
-    .getElementById('highestPrevalenceBtn')
-    .addEventListener('click', function () {
-      highlightCountry(highestCountry);
-    });
+  buttons.select('#highestPrevalenceBtn').on('click', function () {
+    highlightCountry(highestCountry);
+  });
 
   // Event for the "Lowest Prevalence" button
-  document
-    .getElementById('lowestPrevalenceBtn')
-    .addEventListener('click', function () {
-      highlightCountry(lowestCountry);
-    });
+  buttons.select('#lowestPrevalenceBtn').on('click', function () {
+    highlightCountry(lowestCountry);
+  });
 }
 
 // Function to highlight a specific country on the map
