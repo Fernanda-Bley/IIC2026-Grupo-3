@@ -1,24 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="mystyle.css">
     <title>Entrega-1-Grupo-3</title>
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/17197/17197790.png" type="image/gif">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/17197/17197790.png" type="image/png">
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 </head>
 
 <body>
-    <!--<h2>En el año 1997 hubo un (porcentaje)% más fumadores que en el registro más reciente (2020)</h2>-->
-    <div class="body" style="position: relative; z-index: 0;">
-        <div id="myDiv"></div>
+    <main class="content-wrap">
+        <div id="vis"></div>
+    </main>
+    <div id="buttons">
+        <button id="highestPrevalenceBtn">Find Country with Highest Prevalence</button>
+        <button id="lowestPrevalenceBtn">Find Country with Lowest Prevalence</button>
     </div>
+    
+
+    <div class="textStart">
+        <ul>
+            <li>Pais: <span id="detailName"></span></li>
+            <li>Prevalencia: <span id="detailPreval"></span></li>
+        </ul>
+    </div>
+
+    <div class="divLine"></div>
+    <footer class="site-footer">
+        <p>La información fue retirada de: <a href="https://ourworldindata.org/smoking" target="_blank"
+                rel="noopener noreferrer">Our World in Data</a>&nbsp;(Smoking)</p>
+        <p class="additional-info">El año 1997 presenta un mayor número de fumadores per capita según los datos
+            analizados</p>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 
-<footer>
-    <p>La información fue retirada de: <a href="https://ourworldindata.org/smoking">Our World in Data</a>&nbsp;(Smoking)</p>
-    <p2>El año 1997 presenta un mayor número de fumadores per capita según los datos analizados</p2<>
-</footer>
 </html>

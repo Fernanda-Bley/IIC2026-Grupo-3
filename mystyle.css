@@ -1,31 +1,68 @@
-
-.centered {
+body {
+  margin: 0 auto;
+  /* Puedes cambiar el color de fondo (background-color) si lo deseas */
+  background-color: #fcfcfc;
+  color: rgb(47, 47, 47);
+  max-width: 1200px;
+  min-width: 500px;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-#myDiv {
-  width: 800px;
-  height: 600px;
+svg {
+  border: solid 2px rgb(0, 0, 0);
 }
 
-p {
-  position: absolute;
-  bottom: 40px;
-  left: 450px;
-  transform: translateX(-50%);
-}
+/* Main content area to fill available space */
 
-p2 {
-  position: absolute;
-  bottom: 410px;
-  left: 450px;
-  transform: translateX(-50%);
-}
-h2 {
-  position: relative;
-  top: 5px; /* adjust the top position to your liking */
-  left: 37%;
-  transform: translateX(-50%);
+/* Footer always stays at the bottom */
+.site-footer {
+  background-color: #f1f1f1;
   text-align: center;
-  z-index: 1;
+  padding: 10px;
+  width: 100%;
+  margin-top: auto; /* Pushes the footer to the bottom */
+}
+
+.divLine {
+  margin-top: 30px;
+  height: 3px;
+  width: 100%;
+  background-color: rgb(126, 138, 138);
+}
+
+.textStart {
+  text-align: start;
+}
+
+.textStart li {
+  padding-top: 8px;
+}
+
+.textStart.legend span {
+  width: 15px;
+  height: 15px;
+  background-color: rgb(0, 0, 0);
+  display: inline-block;
+}
+
+#buttons {
+  margin-top: 20px;
+}
+
+#buttons button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  background-color: #0096ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#buttons button:hover {
+  background-color: #007bff;
 }
