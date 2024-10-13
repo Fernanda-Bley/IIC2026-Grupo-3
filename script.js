@@ -18,17 +18,20 @@ SVG.attr('width', WIDTH_VIS).attr('height', HEIGHT_VIS);
 // Main function to initiate the entire process
 
 function main() {
-  loadCSVData('./InvestigacionMaximos/data/Population-Smokers-1997.csv')
-    .then((csvData) => {
-      processData(csvData);
-      console.log(countryData);
-      const plotData = preparePlotData();
-      const mapLayout = prepareMapLayout();
-      renderMap(plotData, mapLayout);
-    })
-    .catch((error) => {
-      console.error('Error loading CSV:', error);
-    });
+  // Load country coordinates first
+  loadCountryCoordinates().then(() => {
+    // Once coordinates are loaded, load smoker data and render the map
+    loadCSVData('./InvestigacionMaximos/data/Population-Smokers-1997.csv')
+      .then((csvData) => {
+        processData(csvData);
+        const plotData = preparePlotData();
+        const mapLayout = prepareMapLayout();
+        renderMap(plotData, mapLayout);
+      })
+      .catch((error) => {
+        console.error('Error loading CSV:', error);
+      });
+  });
 }
 
 // Helper function to extract a specific key's value from the dataset
@@ -51,6 +54,41 @@ function processData(smokerData) {
       code: row['Code'],
       year: row['Year'],
     });
+  });
+}
+
+function populateCountryDropdown() {
+  const countrySelect = d3.select('#countrySelect');
+
+  countryData.forEach((country) => {
+    countrySelect
+      .append('option')
+      .attr('value', country.country)
+      .text(country.country);
+  });
+}
+
+function handleCountrySelection() {
+  const countrySelect = d3.select('#countrySelect');
+
+  countrySelect.on('change', function () {
+    const selectedCountryName = this.value;
+
+    // Find the selected country from the data
+    const selectedCountry = countryData.find(
+      (country) => country.country === selectedCountryName
+    );
+
+    console.log('SELECTED COUNTRY: ', selectedCountry);
+
+    if (selectedCountry) {
+      // Zoom into the selected country
+      highlightCountry(selectedCountry);
+
+      // Update the textStart div with the selected country's name and prevalence
+      d3.select('#detailName').text(selectedCountry.country);
+      d3.select('#detailPreval').text(`${selectedCountry.prevalence}%`);
+    }
   });
 }
 
@@ -150,6 +188,10 @@ function renderMap(plotData, layout) {
   // Add button event handlers
   addButtonEventHandlers();
 
+  // Populate the country dropdown and handle selection
+  populateCountryDropdown();
+  handleCountrySelection();
+
   // Render the bar plot for the top 5 countries by population
   const top5ByPopulation = findTop5ByPopulation();
   renderBarPlot(top5ByPopulation);
@@ -208,6 +250,11 @@ function addTop3Table(top3Countries) {
     .text('Prevalence')
     .style('border', '1px solid black')
     .style('padding', '5px');
+  header
+    .append('th')
+    .text('Population')
+    .style('border', '1px solid black')
+    .style('padding', '5px');
 
   // Add table rows for the top 3 countries
   const tbody = table.append('tbody');
@@ -228,23 +275,19 @@ function addTop3Table(top3Countries) {
       .text(country.prevalence)
       .style('border', '1px solid black')
       .style('padding', '5px');
+    row
+      .append('td')
+      .text(country.population)
+      .style('border', '1px solid black')
+      .style('padding', '5px');
   });
 }
 
 function addButtonEventHandlers() {
-  const highestCountry = {
-    name: 'Kiribati', // This is your highest prevalence country
-    lat: 1.8709, // Approximate latitude of the country
-    lon: 157.363, // Approximate longitude of the country
-    prevalence: 50.0, // TODO: HARDCODED prevalence value
-  };
-
-  const lowestCountry = {
-    name: 'República Democrática de São Tomé e Príncipe', // Lowest prevalence country
-    lat: 0.18636, // Approximate latitude
-    lon: 6.613081, // Approximate longitude
-    prevalence: 3.2, // TODO: HARDCODED prevalence value
-  };
+  const highestCountry = countryData.find((c) => c.country === 'Kiribati');
+  const lowestCountry = countryData.find(
+    (c) => c.country === 'Sao Tome and Principe'
+  );
 
   const buttons = d3.select('#buttons');
 
@@ -259,19 +302,54 @@ function addButtonEventHandlers() {
   });
 }
 
-// Function to highlight a specific country on the map
+// Global object to store country coordinates
+let countryCoordinates = {};
+
+// Load the CSV file with country codes and coordinates
+function loadCountryCoordinates() {
+  return d3.csv('./data/countries_codes_and_coordinates.csv').then((data) => {
+    // Parse the data to extract ISO-3 codes, latitudes, and longitudes
+    data.forEach((row) => {
+      // Make sure to clean up any possible quotes and convert lat/lon to numbers
+      const countryCode = row['Alpha-3 code'].replace(/"/g, '').trim(); // Remove quotes from ISO-3 code
+      // remove extra spaces from the code
+
+      const latitude = parseFloat(row['Latitude (average)'].replace(/"/g, '')); // Convert lat to number
+      const longitude = parseFloat(
+        row['Longitude (average)'].replace(/"/g, '')
+      ); // Convert lon to number
+
+      // Store in the countryCoordinates object
+      countryCoordinates[countryCode] = {
+        lat: latitude,
+        lon: longitude,
+      };
+    });
+
+    console.log('Loaded country coordinates:', countryCoordinates); // Debug to ensure correct loading
+  });
+}
+
+// Function to get lat/lon for a given ISO-3 country code
+function getCountryCoordinates(countryCode) {
+  return countryCoordinates[countryCode] || { lat: 0, lon: 0 }; // Return default or placeholder if not found
+}
+
+// Function to highlight and zoom to a specific country
 function highlightCountry(country) {
+  const coords = getCountryCoordinates(country.code); // Get the lat/lon for the selected country
+  console.log('Highlighting:', country, coords);
   Plotly.relayout('vis', {
     'geo.center': {
-      lon: country.lon,
-      lat: country.lat,
+      lat: coords.lat,
+      lon: coords.lon,
     },
-    'geo.projection.scale': 10, // Zoom into the country (adjust scale as needed)
+    'geo.projection.scale': 3, // Adjust scale as needed
   });
 
-  // Display the country name and prevalence in your custom detail section
-  d3.select('#detailName').text(country.name);
-  d3.select('#detailPreval').text(`${country.prevalence}% prevalence`);
+  // Update the country name and prevalence in the textStart div
+  d3.select('#detailName').text(country.country);
+  d3.select('#detailPreval').text(`${country.prevalence}%`);
 }
 
 // Global variable to hold the data for countries
@@ -279,3 +357,5 @@ let countryData = [];
 
 // Call the main function to run the code
 main();
+
+console.log('Script loaded');

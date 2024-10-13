@@ -78,3 +78,16 @@ svg {
   margin-top: 10px;
   font-size: 14px;
 }
+
+#country-selector {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#countrySelect {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
