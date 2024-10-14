@@ -12,7 +12,7 @@ visualización.*
 ### Implementación (50%)
 *Proporciona el enlace a la página web de la visualización (por ejemplo, GitHub Pages).*
 
-> La página web en la que está la visualización se encuentra [aquí](https://fernanda-bley.github.io/IIC2024-Grupo-3/main.html)
+> La página web en la que está la visualización se encuentra [aquí](https://fernanda-bley.github.io/IIC2026-Grupo-3/main.html)
 
 ### Evaluación (10%)
 *Público Evaluador (máximo 2 líneas): Especifica a quiénes mostraste la visualización para evaluación (amigos, compañeros de clase, usuarios potenciales).*
