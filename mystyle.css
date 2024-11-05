@@ -59,12 +59,15 @@ svg {
 
 #buttons button {
   padding: 10px 20px;
-  margin-right: 10px;
+  margin-right: 200px;
   background-color: #0096ff;
   color: white;
   border: none;
   cursor: pointer;
   font-size: 14px;
+  margin-left: 20px; /* Align to the left */
+  margin-top: 20px; /* Add space above */
+  margin-bottom: 20px; /* Add space below */
 }
 
 #buttons button:hover {
@@ -75,13 +78,12 @@ svg {
   display: flex; /* Use flexbox for layout */
   justify-content: space-between; /* Spread the items apart */
   align-items: flex-start; /* Align them at the top (same height) */
-  margin-top: 10px;
   font-size: 14px;
 }
 
 #country-selector {
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 #countrySelect {
@@ -91,3 +93,14 @@ svg {
   border-radius: 5px;
 }
 
+#vis {
+  width: 200%; /* Set the width to 100% of its parent */
+  margin: 0 auto; /* Center horizontally */
+  display: flex; /* Use flexbox for centering */
+  align-items: center; /* Center content vertically, if needed */
+  
+}
+
+#Slider {
+  margin-right: 150px;
+}

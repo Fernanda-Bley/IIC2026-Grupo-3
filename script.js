@@ -3,6 +3,7 @@ const SVG = d3.select('#vis').append('SVG');
 // Editar tamaños como estime conveniente
 const WIDTH_VIS = 1200;
 const HEIGHT_VIS = 250;
+var actual_year = 1997; 
 
 const MARGIN = {
   top: 10,
@@ -21,7 +22,25 @@ function main() {
   // Load country coordinates first
   loadCountryCoordinates().then(() => {
     // Once coordinates are loaded, load smoker data and render the map
-    loadCSVData('./InvestigacionMaximos/data/Population-Smokers-1997.csv')
+    loadCSVData('data/Daily-Smokers.csv')
+      .then((csvData) => {
+        processData(csvData);
+        const plotData = preparePlotData();
+        const mapLayout = prepareMapLayout();
+        renderMap(plotData, mapLayout);
+      })
+      .catch((error) => {
+        console.error('Error loading CSV:', error);
+      });
+  });
+
+  // Slider event to change the year
+  d3.select('#yearSlider').on('input', function() {
+    actual_year = +this.value; // Update the actual_year variable
+    console.log('Selected Year:', actual_year);
+
+    // Reload the data based on the new year
+    loadCSVData('data/Daily-Smokers.csv')
       .then((csvData) => {
         processData(csvData);
         const plotData = preparePlotData();
@@ -46,14 +65,18 @@ function loadCSVData(csvFilePath) {
 
 // Function to process the data and prepare it for plotting
 function processData(smokerData) {
+  countryData = []; // Reset countryData for each year
   smokerData.forEach((row) => {
-    countryData.push({
-      prevalence: row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
-      country: row['Entity'],
-      population: row['Population'],
-      code: row['Code'],
-      year: row['Year'],
-    });
+    // Check if the year is the selected year
+    if (row['Year'] === actual_year) {
+      countryData.push({
+        prevalence: row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
+        country: row['Entity'],
+        population: row['Population'],
+        code: row['Code'],
+        year: row['Year'],
+      });
+    }
   });
 }
 
@@ -101,7 +124,6 @@ function findTop3CountriesPrevalence() {
   return top3;
 }
 
-
 // Function to prepare plot data for Plotly
 function preparePlotData() {
   return [
@@ -114,7 +136,7 @@ function preparePlotData() {
       hoverinfo: 'location+z', // Show country and prevalence on hover
       colorscale: [
         [0, '#72FFFF'],
-        [0.5, '#0096FF'],
+        [0.5, '#0096 FF'],
         [1, '#0002A1'],
       ],
       zmin: 3.2,
@@ -129,15 +151,25 @@ function preparePlotData() {
 function prepareMapLayout() {
   return {
     title: {
-      text: 'Fumadores diarios en 1997 (per capita)',
-      x: 0.47,
+      text: `Fumadores diarios en ${actual_year} (per capita)`,
+      x: 0.49,
       xanchor: 'center',
-      y: 0.85,
+      y: 0.95,
       font: { size: 19, family: 'Arial, sans-serif', color: 'black' },
     },
-    geo: { projection: { type: 'robinson' }, showframe: false },
-    width: 800,
-    height: 600,
+    geo: {
+      projection: { type: 'robinson' },
+      showframe: false, // Hide the frame
+      showcoastlines: true, // Optional: Show coastlines if desired
+      coastlinecolor: 'black', // Optional: Set coastline color
+      bgcolor: 'rgba(0,0,0,0)', // Optional: Set background color to transparent
+      landcolor: 'lightgray', // Optional: Set land color
+      subunitcolor: 'white', // Optional: Set subunit color
+      framecolor: 'white',
+    },
+    showframe: false, 
+    width: 900,
+    height: 400,
     margin: { l: 50, r: 50, t: 50, b: 50 },
   };
 }
@@ -178,9 +210,6 @@ function renderMap(plotData, layout) {
   // Populate the country dropdown and handle selection
   populateCountryDropdown();
   handleCountrySelection();
-
-  // Render the bar plot for the top 5 countries by population
-  
 }
 
 function addHoverInteraction() {
@@ -209,12 +238,18 @@ function addHoverInteraction() {
 function addTop3Table(top3Countries) {
   const tableContainer = d3
     .select('.table')
+    .selectAll('*') // Remove previous table contents
+    .remove(); // Clear the previous table
+
+  const newTableContainer = d3
+    .select('.table')
     .append('div')
     .attr('id', 'top3-table')
-    .style('top', '650px')
-    .style('left', '50px');
+    .style('position', 'absolute') // Use absolute positioning for flexibility
+    .style('top', '150px') // Change this value to move the table vertically
+    .style('left', '910px'); // Change this value to move the table horizontally
 
-  const table = tableContainer
+  const table = newTableContainer
     .append('table')
     .style('border-collapse', 'collapse')
     .style('width', '300px');
@@ -223,51 +258,32 @@ function addTop3Table(top3Countries) {
   const header = table.append('thead').append('tr');
   header
     .append('th')
-    .text('Rank')
-    .style('border', '1px solid black')
-    .style('padding', '5px');
-  header
-    .append('th')
     .text('Country')
     .style('border', '1px solid black')
-    .style('padding', '5px');
+    .style('padding', '8px');
   header
     .append('th')
     .text('Prevalence')
     .style('border', '1px solid black')
-    .style('padding', '5px');
-  header
-    .append('th')
-    .text('Population')
-    .style('border', '1px solid black')
-    .style('padding', '5px');
+    .style('padding', '8px');
 
-  // Add table rows for the top 3 countries
+  // Add table body
   const tbody = table.append('tbody');
-  top3Countries.forEach((country, index) => {
+  top3Countries.forEach(country => {
     const row = tbody.append('tr');
-    row
-      .append('td')
-      .text(index + 1)
-      .style('border', '1px solid black')
-      .style('padding', '5px');
     row
       .append('td')
       .text(country.country)
       .style('border', '1px solid black')
-      .style('padding', '5px');
+      .style('padding', '8px');
     row
       .append('td')
       .text(country.prevalence)
       .style('border', '1px solid black')
-      .style('padding', '5px');
-    row
-      .append('td')
-      .text(country.population)
-      .style('border', '1px solid black')
-      .style('padding', '5px');
+      .style('padding', '8px');
   });
 }
+
 
 function addButtonEventHandlers() {
   const highestCountry = countryData.find((c) => c.country === 'Kiribati');
@@ -330,7 +346,6 @@ function highlightCountry(country) {
   const audio = document.getElementById('countryClickSound');
   audio.currentTime = 0; // Reset the audio to the start
   audio.play(); // Play the audio
-
 
   Plotly.relayout('vis', {
     'geo.center': {

@@ -13,12 +13,15 @@
 </head>
 
 <body>
-    <audio id="countryClickSound" src="/audio-tos/tiny-cough.wav"></audio>
     <main class="content-wrap">
         <div id="vis"></div>
+        <div id= "Slider">
+            <label for="yearSlider">Select Year:</label>
+            <input type="range" id="yearSlider" min="1980" max="2012" value="1997" step="1">
+        </div>
         <div id="buttons">
-            <button id="highestPrevalenceBtn">Find Country with Highest Prevalence</button>
-            <button id="lowestPrevalenceBtn">Find Country with Lowest Prevalence</button>
+            <button id="highestPrevalenceBtn" style="margin-right: 10px;">Find Country with Highest Prevalence</button>
+            <button id="lowestPrevalenceBtn" style="margin-left: 20px;">Find Country with Lowest Prevalence</button>
         </div>
         <div id="country-selector">
             <label for="countrySelect">Check your country prevalence:</label>
@@ -26,7 +29,7 @@
                 <option value="" disabled selected>Select a country</option>
             </select>
         </div>
-        <div id="additional-info">
+        <div id="additional-info" >
             <div class="table"></div>
             <div class="textStart">
                 <ul>
@@ -40,12 +43,9 @@
         <footer class="site-footer">
             <p>La información fue retirada de: <a href="https://ourworldindata.org/smoking" target="_blank"
                     rel="noopener noreferrer">Our World in Data</a>&nbsp;(Smoking)</p>
-            <p class="additional-info">El año 1997 presenta un mayor número de fumadores per capita según los datos
-                analizados</p>
-
             <p>
                 Fumadores pér capita se refiere al número promedio de personas fumadoras en relación con la población
-                total, es decir, cuántas personas, en promedio, fuman por cada habitante de un país en en el año 1997.
+                total, es decir, cuántas personas, en promedio, fuman por cada habitante de un país en en el año indicado.
             </p>
         </footer>
     </main>
