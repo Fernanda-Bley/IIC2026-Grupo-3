@@ -101,9 +101,6 @@ function findTop3CountriesPrevalence() {
   return top3;
 }
 
-function findTop5ByPopulation() {
-  return countryData.sort((a, b) => b.population - a.population).slice(0, 5); // Get the top 5 countries by population
-}
 
 // Function to prepare plot data for Plotly
 function preparePlotData() {
@@ -128,34 +125,6 @@ function preparePlotData() {
   ];
 }
 
-function renderBarPlot(top5Countries) {
-  const countries = top5Countries.map((country) => country.country);
-  const populations = top5Countries.map((country) => country.population);
-
-  const trace = {
-    x: countries,
-    y: populations,
-    type: 'bar',
-    text: populations.map(String), // Show population as hover text
-    marker: {
-      color: '#0096FF',
-    },
-  };
-
-  const layout = {
-    title: 'Top 5 Countries by Population',
-    xaxis: {
-      title: 'Country',
-    },
-    yaxis: {
-      title: 'Population',
-    },
-    margin: { t: 50, b: 50, l: 50, r: 50 },
-  };
-
-  Plotly.newPlot('vis2', [trace], layout);
-}
-
 // Function to prepare the layout for the map
 function prepareMapLayout() {
   return {
@@ -175,6 +144,24 @@ function prepareMapLayout() {
 
 function renderMap(plotData, layout) {
   Plotly.newPlot('vis', plotData, layout, { showLink: false });
+  document.getElementById('vis').on('plotly_click', function(data) {
+    // Get the prevalence value from the click event
+    var prevalence = data.points[0].z; // Assuming 'z' contains the prevalence value
+
+    // Check if the prevalence is between 0 and 15
+    if (prevalence >= 0 && prevalence <= 17) {
+      var audio = new Audio('audio-tos/tiny-cough.wav');
+      audio.play();
+    }
+    else if (prevalence >= 18 && prevalence <= 34) {
+      var audio = new Audio('audio-tos/medium-cough.mp3');
+      audio.play();
+    }
+    else if (prevalence >= 35 && prevalence <= 50){
+      var audio = new Audio('audio-tos/big-cough.mp3');
+      audio.play();
+    }
+  });
 
   // Get the top 3 countries with the highest smoking prevalence
   const top3Countries = findTop3CountriesPrevalence();
@@ -193,8 +180,7 @@ function renderMap(plotData, layout) {
   handleCountrySelection();
 
   // Render the bar plot for the top 5 countries by population
-  const top5ByPopulation = findTop5ByPopulation();
-  renderBarPlot(top5ByPopulation);
+  
 }
 
 function addHoverInteraction() {
@@ -209,14 +195,14 @@ function addHoverInteraction() {
     // Display this information in the custom area of your page
     d3.select('#detailName').text(data.points[0].location);
     d3.select('#detailPreval').text(`${data.points[0].z}%`);
-  });
+  }, { passive: true }); // Mark as passive
 
   // Handle unhover events to clear the displayed details
   vis.on('plotly_unhover', () => {
     // Clear the info when the mouse is not hovering over the map
     d3.select('#detailName').text('');
     d3.select('#detailPreval').text('');
-  });
+  }, { passive: true }); // Mark as passive
 }
 
 // Function to add a table to display the top 3 countries with the highest smoking prevalence
@@ -339,6 +325,13 @@ function getCountryCoordinates(countryCode) {
 function highlightCountry(country) {
   const coords = getCountryCoordinates(country.code); // Get the lat/lon for the selected country
   console.log('Highlighting:', country, coords);
+
+  // Play the audio
+  const audio = document.getElementById('countryClickSound');
+  audio.currentTime = 0; // Reset the audio to the start
+  audio.play(); // Play the audio
+
+
   Plotly.relayout('vis', {
     'geo.center': {
       lat: coords.lat,
