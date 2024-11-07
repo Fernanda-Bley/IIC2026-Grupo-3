@@ -104,3 +104,9 @@ svg {
 #Slider {
   margin-right: 150px;
 }
+
+#additional-info {
+  position: absolute; /* or absolute */
+  top: 10px; /* adjust as needed */
+  left: 880px; /* adjust as needed */
+}
