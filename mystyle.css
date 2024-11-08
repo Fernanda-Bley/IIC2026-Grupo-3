@@ -2,14 +2,17 @@ body {
   margin: 0 auto;
   /* Puedes cambiar el color de fondo (background-color) si lo deseas */
   background-color: #fcfcfc;
-  color: rgb(47, 47, 47);
   max-width: 1200px;
   min-width: 500px;
-  text-align: center;
   display: flex;
   justify-content: center;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
     'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.js-plotly-plot .plotly .main-svg {
+
+  border: 0px;
 }
 
 svg {
@@ -18,24 +21,15 @@ svg {
 
 /* Footer always stays at the bottom */
 .site-footer {
-  background-color: #f1f1f1;
+  background-color: white;
   text-align: center;
   padding: 10px;
   width: 100%;
   margin-top: auto; /* Pushes the footer to the bottom */
 }
 
-.divLine {
-  margin-top: 30px;
-  height: 3px;
-  width: 100%;
-  background-color: rgb(126, 138, 138);
-}
 
-.table {
-  flex: 1; /* Allow the table to take up available space */
-  margin-right: 20px; /* Add some space between the table and text */
-}
+
 
 .textStart {
   flex: 1; /* Allow the textStart to take up available space */
@@ -52,27 +46,6 @@ svg {
   display: inline-block;
 }
 
-#buttons {
-  margin-top: 3px;
-  margin-bottom: 10px;
-}
-
-#buttons button {
-  padding: 10px 20px;
-  margin-right: 200px;
-  background-color: #0096ff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  margin-left: 20px; /* Align to the left */
-  margin-top: 20px; /* Add space above */
-  margin-bottom: 20px; /* Add space below */
-}
-
-#buttons button:hover {
-  background-color: #007bff;
-}
 
 #additional-info {
   display: flex; /* Use flexbox for layout */
@@ -101,12 +74,23 @@ svg {
   
 }
 
-#Slider {
-  margin-right: 150px;
+.table {
+  
+  display: table;
+  border-collapse: separate;
+  box-sizing: border-box;
+  text-indent: initial;
+  unicode-bidi: isolate;
+  border-spacing: 2px;
+  border-color: gray;
 }
 
 #additional-info {
-  position: absolute; /* or absolute */
-  top: 10px; /* adjust as needed */
-  left: 880px; /* adjust as needed */
+  top: 100px; /* adjust as needed */
+  left: 100px; /* adjust as needed */
+}
+
+#slider-container {
+  position: absolute;
+  left: 700px; /* adjust as needed */
 }

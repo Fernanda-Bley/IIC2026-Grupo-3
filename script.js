@@ -136,7 +136,7 @@ function preparePlotData() {
       hoverinfo: 'location+z', // Show country and prevalence on hover
       colorscale: [
         [0, '#72FFFF'],
-        [0.5, '#0096 FF'],
+        [0.5, '#0096FF'],
         [1, '#0002A1'],
       ],
       zmin: 3.2,
@@ -151,7 +151,7 @@ function preparePlotData() {
 function prepareMapLayout() {
   return {
     title: {
-      text: `Fumadores diarios en ${actual_year} (per capita)`,
+      text: `Porcentaje de fumadores diarios en ${actual_year}`,
       x: 0.49,
       xanchor: 'center',
       y: 0.95,
@@ -166,6 +166,12 @@ function prepareMapLayout() {
       landcolor: 'lightgray', // Optional: Set land color
       subunitcolor: 'white', // Optional: Set subunit color
       framecolor: 'white',
+      colorscale: [
+        [0, 'blue'],    // Color at the minimum value
+        [0.5, 'yellow'], // Color at the midpoint
+        [1, 'red']      // Color at the maximum value
+      ],
+
     },
     showframe: false, 
     width: 900,
@@ -173,6 +179,8 @@ function prepareMapLayout() {
     margin: { l: 50, r: 50, t: 50, b: 50 },
   };
 }
+
+
 
 function renderMap(plotData, layout) {
   Plotly.newPlot('vis', plotData, layout, { showLink: false });

@@ -15,29 +15,21 @@
 <body>
     <main class="content-wrap">
         <div id="vis"></div>
-        <div id= "Slider">
+        <div class="slider-container">
             <label for="yearSlider">Select Year:</label>
             <input type="range" id="yearSlider" min="1980" max="2012" value="1997" step="1">
         </div>
-        
+
         <div id="additional-info" >
             <div class="table"></div>
-            <div class="textStart">
-                <ul>
-                    <li>País: <span id="detailName"></span></li>
-                    <li>Prevalencia: <span id="detailPreval"></span></li>
-                </ul>
-            </div>
+            <div style="top: 150px; left: 10px;"></div>
         </div>
-        <div class="divLine"></div>
+        
+        
         <div id="vis2"></div>
         <footer class="site-footer">
             <p>La información fue retirada de: <a href="https://ourworldindata.org/smoking" target="_blank"
                     rel="noopener noreferrer">Our World in Data</a>&nbsp;(Smoking)</p>
-            <p>
-                Fumadores pér capita se refiere al número promedio de personas fumadoras en relación con la población
-                total, es decir, cuántas personas, en promedio, fuman por cada habitante de un país en en el año indicado.
-            </p>
         </footer>
     </main>
 
