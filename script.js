@@ -166,11 +166,6 @@ function prepareMapLayout() {
       landcolor: 'lightgray', // Optional: Set land color
       subunitcolor: 'white', // Optional: Set subunit color
       framecolor: 'white',
-      colorscale: [
-        [0, 'blue'],    // Color at the minimum value
-        [0.5, 'yellow'], // Color at the midpoint
-        [1, 'red']      // Color at the maximum value
-      ],
 
     },
     showframe: false, 
@@ -242,7 +237,6 @@ function addHoverInteraction() {
   }, { passive: true }); // Mark as passive
 }
 
-// Function to add a table to display the top 3 countries with the highest smoking prevalence
 function addTop3Table(top3Countries) {
   const tableContainer = d3
     .select('.table')
@@ -252,28 +246,29 @@ function addTop3Table(top3Countries) {
   const newTableContainer = d3
     .select('.table')
     .append('div')
-    .attr('id', 'top3-table')
-    .style('position', 'absolute') // Use absolute positioning for flexibility
-    .style('top', '170px') // Change this value to move the table vertically
-    .style('left', '10px'); // Change this value to move the table horizontally
+    .attr('id', 'top3-table');
 
   const table = newTableContainer
     .append('table')
     .style('border-collapse', 'collapse')
-    .style('width', '300px');
+    .style('width', '300px') // Set a fixed width for the table
+    .style('table-layout', 'fixed'); // Ensure fixed layout
 
   // Add table headers
   const header = table.append('thead').append('tr');
   header
     .append('th')
-    .text('Country')
+    .text(' ')
     .style('border', '0px solid black')
-    .style('padding', '8px');
+    .style('padding', '10px')
+    .style('width', '100px'); // Set a fixed width for header cell
   header
     .append('th')
-    .text('Prevalence')
+    .text('Prevalence (%)')
     .style('border', '0px solid black')
-    .style('padding', '8px');
+    .style('text-align', 'center')
+    .style('padding', '10px')
+    .style('width', '200px'); // Set a fixed width for header cell
 
   // Add table body
   const tbody = table.append('tbody');
@@ -283,12 +278,36 @@ function addTop3Table(top3Countries) {
       .append('td')
       .text(country.country)
       .style('border', '0px solid black')
-      .style('padding', '8px');
-    row
-      .append('td')
-      .text(country.prevalence)
+      .style('padding', '10px')
+      .style('font-size', '14px')
+      .style('height', '40px')
+      .style('width', '100px') // Set a fixed width for country cell
+      .style('overflow', 'hidden') // Prevent overflow
+      .style('text-align', 'center');
+
+    // Create a cell for the prevalence rectangle
+    const prevalenceCell = row.append('td')
       .style('border', '0px solid black')
-      .style('padding', '8px');
+      .style('padding', '10px')
+      .style('height', '40px') // Set a fixed height for the cell
+      .style('width', '200px') // Set a fixed width for the cell
+      .style('overflow', 'hidden'); // Prevent overflow
+
+    // Create an SVG element to hold the rectangle
+    const svg = prevalenceCell.append('svg')
+      .style('border', '1px solid black')
+      .attr('width', '100%') // Full width of the cell
+      .attr('height', '100%'); // Full height of the cell
+
+    // Calculate the width of the rectangle as a percentage of the cell's width
+    const prevalenceWidth = (country.prevalence / 100) * 200; // Assuming the cell width is 200px
+
+    // Append a rectangle to the SVG
+    svg.append('rect')
+      .attr('width', prevalenceWidth) // Width based on prevalence
+      .attr('height', '100%') // Fill the height of the cell
+      .attr('fill', '#0002A1') // Color of the rectangle
+      .attr('y', 0); // Position the rectangle at the top
   });
 }
 
