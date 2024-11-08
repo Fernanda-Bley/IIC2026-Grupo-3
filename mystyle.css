@@ -94,3 +94,7 @@ svg {
   position: absolute;
   left: 700px; /* adjust as needed */
 }
+
+#top3-table{
+  left: 100px;
+}

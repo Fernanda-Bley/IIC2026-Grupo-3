@@ -254,8 +254,8 @@ function addTop3Table(top3Countries) {
     .append('div')
     .attr('id', 'top3-table')
     .style('position', 'absolute') // Use absolute positioning for flexibility
-    .style('top', '150px') // Change this value to move the table vertically
-    .style('left', '910px'); // Change this value to move the table horizontally
+    .style('top', '170px') // Change this value to move the table vertically
+    .style('left', '10px'); // Change this value to move the table horizontally
 
   const table = newTableContainer
     .append('table')
@@ -267,12 +267,12 @@ function addTop3Table(top3Countries) {
   header
     .append('th')
     .text('Country')
-    .style('border', '1px solid black')
+    .style('border', '0px solid black')
     .style('padding', '8px');
   header
     .append('th')
     .text('Prevalence')
-    .style('border', '1px solid black')
+    .style('border', '0px solid black')
     .style('padding', '8px');
 
   // Add table body
@@ -282,12 +282,12 @@ function addTop3Table(top3Countries) {
     row
       .append('td')
       .text(country.country)
-      .style('border', '1px solid black')
+      .style('border', '0px solid black')
       .style('padding', '8px');
     row
       .append('td')
       .text(country.prevalence)
-      .style('border', '1px solid black')
+      .style('border', '0px solid black')
       .style('padding', '8px');
   });
 }
