@@ -70,6 +70,8 @@ svg {
 
 #playPauseButton {
   margin: 10px; /* Add some space around the button */
+  background-color: #CBDCEB; /* Remove quotes */
+  border: 0px solid black; /* Remove quotes */
 }
 
 .table {
@@ -109,7 +111,7 @@ input[type='range']::-webkit-slider-thumb {
   appearance: none; /* Remove default styling */
   width: 20px; /* Width of the thumb */
   height: 20px; /* Height of the thumb */
-  background: blue; /* Color of the thumb */
+  background: #36C2CE; /* Color of the thumb */
   border-radius: 50%; /* Make the thumb circular */
   cursor: pointer; /* Pointer cursor on hover */
 }

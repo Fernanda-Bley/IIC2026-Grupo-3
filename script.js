@@ -58,7 +58,7 @@ function main() {
     // If animation is playing, reset it
     if (isPlaying) {
       stopAnimation();
-      d3.select('#playPauseButton').text('Play animation');
+      d3.select('#playPauseButton').text('Animación por los años');
       isPlaying = false;
     }
   });
@@ -68,10 +68,12 @@ function main() {
   playPauseButton.on('click', function () {
     isPlaying = !isPlaying;
     if (isPlaying) {
-      playPauseButton.text('Pause');
+      playPauseButton.text('Para la animación');
+      playPauseButton.style('background-color', '#36C2CE')
       startAnimation();
     } else {
-      playPauseButton.text('Play animation');
+      playPauseButton.text('Animación por los años');
+      playPauseButton.style('background-color', '#CBDCEB')
       stopAnimation();
     }
   });
@@ -132,8 +134,10 @@ function preparePlotData() {
       text: extractData(countryData, 'country'),
       hoverinfo: 'location+z', // Show country and prevalence on hover
       colorscale: [
-        [0, '#72FFFF'],
-        [0.5, '#0096FF'],
+        [0, '#CBDCEB'],
+        [0.25, '#36C2CE'],
+        [0.5, '#3A6D8C'],
+        [0.75, '#003161'],
         [1, '#0002A1'],
       ],
       zmin: 3.2,
@@ -324,16 +328,16 @@ function addTop3Table(top3Countries) {
   const header = table.append('thead').append('tr');
   header
     .append('th')
-    .text('País')
+    .text(' ')
     .style('border', '0px solid black')
     .style('padding', '10px')
     .style('width', '100px'); // Fixed width for country cell
   header
     .append('th')
-    .text('Prevalencia (%)')
+    .text('Prevalencia')
     .style('border', '0px solid black')
-    .style('text-align', 'center')
     .style('padding', '10px')
+    .style('text-align', 'left')
     .style('width', '200px'); // Fixed width for prevalence cell
 
   // Table body
@@ -363,7 +367,7 @@ function addTop3Table(top3Countries) {
     // SVG for the prevalence bar
     const svg = prevalenceCell
       .append('svg')
-      .style('border', '1px solid black')
+      .style('border', '0px solid black')
       .attr('width', '100%')
       .attr('height', '100%');
 
@@ -374,7 +378,7 @@ function addTop3Table(top3Countries) {
       .append('rect')
       .attr('width', prevalenceWidth)
       .attr('height', '100%')
-      .attr('fill', '#0002A1')
+      .attr('fill', '#36C2CE')
       .attr('y', 0);
 
     // Add the text showing the prevalence percentage with 1 decimal inside the SVG
