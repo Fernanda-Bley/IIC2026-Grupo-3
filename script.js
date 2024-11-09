@@ -238,10 +238,8 @@ function addHoverInteraction() {
 }
 
 function addTop3Table(top3Countries) {
-  const tableContainer = d3
-    .select('.table')
-    .selectAll('*') // Remove previous table contents
-    .remove(); // Clear the previous table
+  // Limpiar el contenedor de la tabla antes de agregar nuevos datos
+  d3.select('.table').selectAll('*').remove();
 
   const newTableContainer = d3
     .select('.table')
@@ -251,26 +249,26 @@ function addTop3Table(top3Countries) {
   const table = newTableContainer
     .append('table')
     .style('border-collapse', 'collapse')
-    .style('width', '300px') // Set a fixed width for the table
-    .style('table-layout', 'fixed'); // Ensure fixed layout
+    .style('width', '300px')
+    .style('table-layout', 'fixed');
 
-  // Add table headers
+  // Agregar encabezados a la tabla
   const header = table.append('thead').append('tr');
   header
     .append('th')
-    .text(' ')
+    .text('País')
     .style('border', '0px solid black')
     .style('padding', '10px')
-    .style('width', '100px'); // Set a fixed width for header cell
+    .style('width', '100px'); // Anchura fija para la celda del país
   header
     .append('th')
-    .text('Prevalence (%)')
+    .text('Prevalencia (%)')
     .style('border', '0px solid black')
     .style('text-align', 'center')
     .style('padding', '10px')
-    .style('width', '200px'); // Set a fixed width for header cell
+    .style('width', '200px'); // Anchura fija para la celda de prevalencia
 
-  // Add table body
+  // Cuerpo de la tabla
   const tbody = table.append('tbody');
   top3Countries.forEach(country => {
     const row = tbody.append('tr');
@@ -281,35 +279,45 @@ function addTop3Table(top3Countries) {
       .style('padding', '10px')
       .style('font-size', '14px')
       .style('height', '40px')
-      .style('width', '100px') // Set a fixed width for country cell
-      .style('overflow', 'hidden') // Prevent overflow
+      .style('width', '100px')
+      .style('overflow', 'hidden')
       .style('text-align', 'center');
 
-    // Create a cell for the prevalence rectangle
+    // Celda de prevalencia que contiene el SVG
     const prevalenceCell = row.append('td')
       .style('border', '0px solid black')
       .style('padding', '10px')
-      .style('height', '40px') // Set a fixed height for the cell
-      .style('width', '200px') // Set a fixed width for the cell
-      .style('overflow', 'hidden'); // Prevent overflow
+      .style('height', '40px')
+      .style('width', '200px')
+      .style('overflow', 'hidden');
 
-    // Create an SVG element to hold the rectangle
+    // SVG para la barra de prevalencia
     const svg = prevalenceCell.append('svg')
       .style('border', '1px solid black')
-      .attr('width', '100%') // Full width of the cell
-      .attr('height', '100%'); // Full height of the cell
+      .attr('width', '100%')
+      .attr('height', '100%');
 
-    // Calculate the width of the rectangle as a percentage of the cell's width
-    const prevalenceWidth = (country.prevalence / 100) * 200; // Assuming the cell width is 200px
+    const prevalenceWidth = (country.prevalence / 100) * 200;
 
-    // Append a rectangle to the SVG
+    // Agregar el rectángulo que representa la prevalencia
     svg.append('rect')
-      .attr('width', prevalenceWidth) // Width based on prevalence
-      .attr('height', '100%') // Fill the height of the cell
-      .attr('fill', '#0002A1') // Color of the rectangle
-      .attr('y', 0); // Position the rectangle at the top
+      .attr('width', prevalenceWidth)
+      .attr('height', '100%')
+      .attr('fill', '#0002A1')
+      .attr('y', 0);
+
+    // Agregar el texto que muestra el porcentaje de prevalencia con 1 decimal dentro del SVG
+    svg.append('text')
+      .attr('x', prevalenceWidth - 10) // Posición ajustada cerca del final del rectángulo
+      .attr('y', '50%') // Centrado verticalmente
+      .attr('dy', '0.35em') // Ajuste de alineación vertical
+      .attr('text-anchor', 'end') // Alineación del texto al final del rectángulo
+      .style('fill', 'white')
+      .style('font-size', '12px')
+      .text(`${country.prevalence.toFixed(1)}%`);
   });
 }
+
 
 
 function addButtonEventHandlers() {
