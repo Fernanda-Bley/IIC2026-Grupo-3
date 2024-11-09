@@ -11,7 +11,6 @@ body {
 }
 
 .js-plotly-plot .plotly .main-svg {
-
   border: 0px;
 }
 
@@ -28,9 +27,6 @@ svg {
   margin-top: auto; /* Pushes the footer to the bottom */
 }
 
-
-
-
 .textStart {
   flex: 1; /* Allow the textStart to take up available space */
 }
@@ -45,7 +41,6 @@ svg {
   background-color: rgb(0, 0, 0);
   display: inline-block;
 }
-
 
 #additional-info {
   display: flex; /* Use flexbox for layout */
@@ -71,11 +66,13 @@ svg {
   margin: 0 auto; /* Center horizontally */
   display: flex; /* Use flexbox for centering */
   align-items: center; /* Center content vertically, if needed */
-  
+}
+
+#playPauseButton {
+  margin: 10px; /* Add some space around the button */
 }
 
 .table {
-  
   display: table;
   border-collapse: separate;
   box-sizing: border-box;
@@ -93,11 +90,11 @@ svg {
 .slider-container {
   display: flex;
   flex-direction: column; /* Stack label and slider vertically */
-  align-items: center;    /* Center items horizontally */
+  align-items: center; /* Center items horizontally */
 }
 
 /* Style the slider itself */
-input[type="range"] {
+input[type='range'] {
   -webkit-appearance: none; /* Remove default styling in WebKit browsers */
   width: 50%; /* Full width of the container */
   height: 8px; /* Height of the slider track */
@@ -107,7 +104,7 @@ input[type="range"] {
 }
 
 /* Style the slider thumb */
-input[type="range"]::-webkit-slider-thumb {
+input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none; /* Remove default styling in WebKit browsers */
   appearance: none; /* Remove default styling */
   width: 20px; /* Width of the thumb */
@@ -118,7 +115,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* Style the slider thumb for Firefox */
-input[type="range"]::-moz-range-thumb {
+input[type='range']::-moz-range-thumb {
   width: 20px; /* Width of the thumb */
   height: 20px; /* Height of the thumb */
   background: blue; /* Color of the thumb */
@@ -127,7 +124,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Style the slider thumb for Internet Explorer */
-input[type="range"]::-ms-thumb {
+input[type='range']::-ms-thumb {
   width: 20px; /* Width of the thumb */
   height: 20px; /* Height of the thumb */
   background: blue; /* Color of the thumb */
@@ -136,7 +133,7 @@ input[type="range"]::-ms-thumb {
 }
 
 /* Optional: Change the color of the track when the slider is active */
-input[type="range"]:active {
+input[type='range']:active {
   background: #ccc; /* Change the background when active */
 }
 

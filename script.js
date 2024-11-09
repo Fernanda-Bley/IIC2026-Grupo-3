@@ -3,7 +3,10 @@ const SVG = d3.select('#vis').append('SVG');
 // Editar tamaños como estime conveniente
 const WIDTH_VIS = 1200;
 const HEIGHT_VIS = 250;
-var actual_year = 1997; 
+var actual_year = 1997;
+
+let currentCenter = null;
+let currentScale = null;
 
 const MARGIN = {
   top: 10,
@@ -16,18 +19,27 @@ const WIDTHVISINSIDE = WIDTH_VIS - MARGIN.right - MARGIN.left;
 
 SVG.attr('width', WIDTH_VIS).attr('height', HEIGHT_VIS);
 
-// Main function to initiate the entire process
+// Global variables to hold data
+let smokerData = [];
+let countryData = [];
 
+// Variables for animation control
+let isPlaying = false;
+let intervalId = null;
+const startYear = 1980;
+const endYear = 2012;
+let currentYear = actual_year; // Start with the actual_year
+
+// Main function to initiate the entire process
 function main() {
   // Load country coordinates first
   loadCountryCoordinates().then(() => {
     // Once coordinates are loaded, load smoker data and render the map
     loadCSVData('data/Daily-Smokers.csv')
       .then((csvData) => {
-        processData(csvData);
-        const plotData = preparePlotData();
-        const mapLayout = prepareMapLayout();
-        renderMap(plotData, mapLayout);
+        smokerData = csvData; // Store the data globally
+        updateVisualization(actual_year);
+        addMapEventListeners();
       })
       .catch((error) => {
         console.error('Error loading CSV:', error);
@@ -35,22 +47,42 @@ function main() {
   });
 
   // Slider event to change the year
-  d3.select('#yearSlider').on('input', function() {
+  d3.select('#yearSlider').on('input', function () {
     actual_year = +this.value; // Update the actual_year variable
+    currentYear = actual_year; // Update currentYear used in animation
     console.log('Selected Year:', actual_year);
 
-    // Reload the data based on the new year
-    loadCSVData('data/Daily-Smokers.csv')
-      .then((csvData) => {
-        processData(csvData);
-        const plotData = preparePlotData();
-        const mapLayout = prepareMapLayout();
-        renderMap(plotData, mapLayout);
-      })
-      .catch((error) => {
-        console.error('Error loading CSV:', error);
-      });
+    // Update the visualization for the new year
+    updateVisualization(actual_year);
+
+    // If animation is playing, reset it
+    if (isPlaying) {
+      stopAnimation();
+      d3.select('#playPauseButton').text('Play animation');
+      isPlaying = false;
+    }
   });
+
+  // Handle the play/pause button
+  const playPauseButton = d3.select('#playPauseButton');
+  playPauseButton.on('click', function () {
+    isPlaying = !isPlaying;
+    if (isPlaying) {
+      playPauseButton.text('Pause');
+      startAnimation();
+    } else {
+      playPauseButton.text('Play animation');
+      stopAnimation();
+    }
+  });
+}
+
+// Function to update the visualization for a given year
+function updateVisualization(year) {
+  processData(smokerData, year);
+  const plotData = preparePlotData();
+  const mapLayout = prepareMapLayout(year);
+  renderMap(plotData, mapLayout);
 }
 
 // Helper function to extract a specific key's value from the dataset
@@ -64,11 +96,11 @@ function loadCSVData(csvFilePath) {
 }
 
 // Function to process the data and prepare it for plotting
-function processData(smokerData) {
+function processData(smokerData, year) {
   countryData = []; // Reset countryData for each year
   smokerData.forEach((row) => {
     // Check if the year is the selected year
-    if (row['Year'] === actual_year) {
+    if (row['Year'] === year) {
       countryData.push({
         prevalence: row['Daily smoking prevalence - both (IHME, GHDx (2012))'],
         country: row['Entity'],
@@ -76,41 +108,6 @@ function processData(smokerData) {
         code: row['Code'],
         year: row['Year'],
       });
-    }
-  });
-}
-
-function populateCountryDropdown() {
-  const countrySelect = d3.select('#countrySelect');
-
-  countryData.forEach((country) => {
-    countrySelect
-      .append('option')
-      .attr('value', country.country)
-      .text(country.country);
-  });
-}
-
-function handleCountrySelection() {
-  const countrySelect = d3.select('#countrySelect');
-
-  countrySelect.on('change', function () {
-    const selectedCountryName = this.value;
-
-    // Find the selected country from the data
-    const selectedCountry = countryData.find(
-      (country) => country.country === selectedCountryName
-    );
-
-    console.log('SELECTED COUNTRY: ', selectedCountry);
-
-    if (selectedCountry) {
-      // Zoom into the selected country
-      highlightCountry(selectedCountry);
-
-      // Update the textStart div with the selected country's name and prevalence
-      d3.select('#detailName').text(selectedCountry.country);
-      d3.select('#detailPreval').text(`${selectedCountry.prevalence}%`);
     }
   });
 }
@@ -148,10 +145,10 @@ function preparePlotData() {
 }
 
 // Function to prepare the layout for the map
-function prepareMapLayout() {
+function prepareMapLayout(year) {
   return {
     title: {
-      text: `Porcentaje de fumadores diarios en ${actual_year}`,
+      text: `Porcentaje de fumadores diarios en ${year}`,
       x: 0.49,
       xanchor: 'center',
       y: 0.95,
@@ -166,35 +163,69 @@ function prepareMapLayout() {
       landcolor: 'lightgray', // Optional: Set land color
       subunitcolor: 'white', // Optional: Set subunit color
       framecolor: 'white',
-
     },
-    showframe: false, 
+    showframe: false,
     width: 900,
     height: 400,
     margin: { l: 50, r: 50, t: 50, b: 50 },
   };
 }
 
-
-
+// Modified renderMap function to clear hover labels during updates
 function renderMap(plotData, layout) {
-  Plotly.newPlot('vis', plotData, layout, { showLink: false });
-  document.getElementById('vis').on('plotly_click', function(data) {
-    // Get the prevalence value from the click event
-    var prevalence = data.points[0].z; // Assuming 'z' contains the prevalence value
+  const visDiv = document.getElementById('vis');
 
-    // Check if the prevalence is between 0 and 15
-    if (prevalence >= 0 && prevalence <= 17) {
-      var audio = new Audio('audio-tos/tiny-cough.wav');
-      audio.play();
+  // Check if the plot already exists
+  if (visDiv.data) {
+    // Get current center and scale
+    const currentLayout = visDiv.layout;
+    if (currentLayout && currentLayout.geo) {
+      if (!layout.geo) layout.geo = {};
+      if (!layout.geo.center) layout.geo.center = {};
+      if (!layout.geo.projection) layout.geo.projection = {};
+      layout.geo.center = currentCenter || layout.geo.center;
+      layout.geo.projection.scale = currentScale || layout.geo.projection.scale;
     }
-    else if (prevalence >= 18 && prevalence <= 34) {
-      var audio = new Audio('audio-tos/medium-cough.mp3');
-      audio.play();
+
+    // Update the plot using Plotly.react
+    Plotly.react('vis', plotData, layout, { showLink: false });
+
+    // **Clear any existing hover labels**
+    Plotly.Fx.unhover('vis');
+  } else {
+    // First time, create the plot
+    Plotly.newPlot('vis', plotData, layout, { showLink: false });
+  }
+
+  // After clearing hover labels
+  Plotly.Fx.unhover('vis');
+
+  // Get the current mouse position relative to the plot
+  const mouseX = visDiv._fullLayout._lastInputTime
+    ? visDiv._fullLayout._lastHoverX
+    : null;
+  const mouseY = visDiv._fullLayout._lastInputTime
+    ? visDiv._fullLayout._lastHoverY
+    : null;
+
+  // If mouse position is available, trigger a hover event
+  if (mouseX !== null && mouseY !== null) {
+    Plotly.Fx.hover('vis', { xval: mouseX, yval: mouseY });
+  }
+
+  // Add event listener to update currentCenter and currentScale during drag
+  visDiv.on('plotly_relayouting', function (eventData) {
+    if (
+      eventData['geo.center.lon'] !== undefined &&
+      eventData['geo.center.lat'] !== undefined
+    ) {
+      currentCenter = {
+        lon: eventData['geo.center.lon'],
+        lat: eventData['geo.center.lat'],
+      };
     }
-    else if (prevalence >= 35 && prevalence <= 50){
-      var audio = new Audio('audio-tos/big-cough.mp3');
-      audio.play();
+    if (eventData['geo.projection.scale'] !== undefined) {
+      currentScale = eventData['geo.projection.scale'];
     }
   });
 
@@ -207,38 +238,75 @@ function renderMap(plotData, layout) {
   // Add hover interaction
   addHoverInteraction();
 
-  // Add button event handlers
-  addButtonEventHandlers();
-
-  // Populate the country dropdown and handle selection
-  populateCountryDropdown();
-  handleCountrySelection();
+  // Add button event handlers (if applicable)
+  // addButtonEventHandlers();
 }
 
 function addHoverInteraction() {
   const vis = document.getElementById('vis');
 
   // Handle hover events to display details in the designated area
-  vis.on('plotly_hover', (data) => {
-    const infotext = data.points.map(
-      (d) => `${d.location}: ${d.z}% prevalence`
-    );
+  vis.on(
+    'plotly_hover',
+    (data) => {
+      const infotext = data.points.map(
+        (d) => `${d.location}: ${d.z}% prevalence`
+      );
 
-    // Display this information in the custom area of your page
-    d3.select('#detailName').text(data.points[0].location);
-    d3.select('#detailPreval').text(`${data.points[0].z}%`);
-  }, { passive: true }); // Mark as passive
+      // Display this information in the console or create a display area in your HTML
+      console.log(infotext);
+    },
+    { passive: true }
+  ); // Mark as passive
 
-  // Handle unhover events to clear the displayed details
-  vis.on('plotly_unhover', () => {
-    // Clear the info when the mouse is not hovering over the map
-    d3.select('#detailName').text('');
-    d3.select('#detailPreval').text('');
-  }, { passive: true }); // Mark as passive
+  // Handle unhover events
+  vis.on(
+    'plotly_unhover',
+    () => {
+      // Clear the info when the mouse is not hovering over the map
+    },
+    { passive: true }
+  ); // Mark as passive
+}
+
+function addMapEventListeners() {
+  const visDiv = document.getElementById('vis');
+
+  visDiv.on('plotly_click', function (data) {
+    console.log('Country clicked:', data);
+    var prevalence = data.points[0].z;
+    console.log('Prevalence:', prevalence);
+
+    var audioSrc = '';
+    if (prevalence >= 0 && prevalence < 18) {
+      audioSrc = 'audio-tos/tiny-cough.wav';
+    } else if (prevalence >= 18 && prevalence < 35) {
+      audioSrc = 'audio-tos/medium-cough.mp3';
+    } else if (prevalence >= 35 && prevalence <= 50) {
+      audioSrc = 'audio-tos/big-cough.mp3';
+    }
+
+    if (audioSrc) {
+      var audio = new Audio(audioSrc);
+      audio.volume = 1.0;
+      audio
+        .play()
+        .then(function () {
+          console.log('Audio playback started');
+        })
+        .catch(function (error) {
+          console.error('Audio playback failed:', error);
+        });
+    } else {
+      console.warn('No audio source selected');
+    }
+  });
+
+  // Move other event listeners here if needed
 }
 
 function addTop3Table(top3Countries) {
-  // Limpiar el contenedor de la tabla antes de agregar nuevos datos
+  // Clear the table container before adding new data
   d3.select('.table').selectAll('*').remove();
 
   const newTableContainer = d3
@@ -252,25 +320,25 @@ function addTop3Table(top3Countries) {
     .style('width', '300px')
     .style('table-layout', 'fixed');
 
-  // Agregar encabezados a la tabla
+  // Add table headers
   const header = table.append('thead').append('tr');
   header
     .append('th')
     .text('País')
     .style('border', '0px solid black')
     .style('padding', '10px')
-    .style('width', '100px'); // Anchura fija para la celda del país
+    .style('width', '100px'); // Fixed width for country cell
   header
     .append('th')
     .text('Prevalencia (%)')
     .style('border', '0px solid black')
     .style('text-align', 'center')
     .style('padding', '10px')
-    .style('width', '200px'); // Anchura fija para la celda de prevalencia
+    .style('width', '200px'); // Fixed width for prevalence cell
 
-  // Cuerpo de la tabla
+  // Table body
   const tbody = table.append('tbody');
-  top3Countries.forEach(country => {
+  top3Countries.forEach((country) => {
     const row = tbody.append('tr');
     row
       .append('td')
@@ -283,59 +351,42 @@ function addTop3Table(top3Countries) {
       .style('overflow', 'hidden')
       .style('text-align', 'center');
 
-    // Celda de prevalencia que contiene el SVG
-    const prevalenceCell = row.append('td')
+    // Prevalence cell containing the SVG
+    const prevalenceCell = row
+      .append('td')
       .style('border', '0px solid black')
       .style('padding', '10px')
       .style('height', '40px')
       .style('width', '200px')
       .style('overflow', 'hidden');
 
-    // SVG para la barra de prevalencia
-    const svg = prevalenceCell.append('svg')
+    // SVG for the prevalence bar
+    const svg = prevalenceCell
+      .append('svg')
       .style('border', '1px solid black')
       .attr('width', '100%')
       .attr('height', '100%');
 
     const prevalenceWidth = (country.prevalence / 100) * 200;
 
-    // Agregar el rectángulo que representa la prevalencia
-    svg.append('rect')
+    // Add the rectangle representing prevalence
+    svg
+      .append('rect')
       .attr('width', prevalenceWidth)
       .attr('height', '100%')
       .attr('fill', '#0002A1')
       .attr('y', 0);
 
-    // Agregar el texto que muestra el porcentaje de prevalencia con 1 decimal dentro del SVG
-    svg.append('text')
-      .attr('x', prevalenceWidth - 10) // Posición ajustada cerca del final del rectángulo
-      .attr('y', '50%') // Centrado verticalmente
-      .attr('dy', '0.35em') // Ajuste de alineación vertical
-      .attr('text-anchor', 'end') // Alineación del texto al final del rectángulo
+    // Add the text showing the prevalence percentage with 1 decimal inside the SVG
+    svg
+      .append('text')
+      .attr('x', prevalenceWidth - 10) // Adjusted position near the end of the rectangle
+      .attr('y', '50%') // Vertically centered
+      .attr('dy', '0.35em') // Vertical alignment adjustment
+      .attr('text-anchor', 'end') // Text alignment at the end of the rectangle
       .style('fill', 'white')
       .style('font-size', '12px')
       .text(`${country.prevalence.toFixed(1)}%`);
-  });
-}
-
-
-
-function addButtonEventHandlers() {
-  const highestCountry = countryData.find((c) => c.country === 'Kiribati');
-  const lowestCountry = countryData.find(
-    (c) => c.country === 'Sao Tome and Principe'
-  );
-
-  const buttons = d3.select('#buttons');
-
-  // Event for the "Highest Prevalence" button
-  buttons.select('#highestPrevalenceBtn').on('click', function () {
-    highlightCountry(highestCountry);
-  });
-
-  // Event for the "Lowest Prevalence" button
-  buttons.select('#lowestPrevalenceBtn').on('click', function () {
-    highlightCountry(lowestCountry);
   });
 }
 
@@ -347,9 +398,8 @@ function loadCountryCoordinates() {
   return d3.csv('./data/countries_codes_and_coordinates.csv').then((data) => {
     // Parse the data to extract ISO-3 codes, latitudes, and longitudes
     data.forEach((row) => {
-      // Make sure to clean up any possible quotes and convert lat/lon to numbers
+      // Clean up any possible quotes and convert lat/lon to numbers
       const countryCode = row['Alpha-3 code'].replace(/"/g, '').trim(); // Remove quotes from ISO-3 code
-      // remove extra spaces from the code
 
       const latitude = parseFloat(row['Latitude (average)'].replace(/"/g, '')); // Convert lat to number
       const longitude = parseFloat(
@@ -377,11 +427,6 @@ function highlightCountry(country) {
   const coords = getCountryCoordinates(country.code); // Get the lat/lon for the selected country
   console.log('Highlighting:', country, coords);
 
-  // Play the audio
-  const audio = document.getElementById('countryClickSound');
-  audio.currentTime = 0; // Reset the audio to the start
-  audio.play(); // Play the audio
-
   Plotly.relayout('vis', {
     'geo.center': {
       lat: coords.lat,
@@ -389,14 +434,26 @@ function highlightCountry(country) {
     },
     'geo.projection.scale': 3, // Adjust scale as needed
   });
-
-  // Update the country name and prevalence in the textStart div
-  d3.select('#detailName').text(country.country);
-  d3.select('#detailPreval').text(`${country.prevalence}%`);
 }
 
-// Global variable to hold the data for countries
-let countryData = [];
+// Functions for animation control
+function startAnimation() {
+  if (intervalId) clearInterval(intervalId);
+  intervalId = setInterval(() => {
+    if (currentYear < endYear) {
+      currentYear++;
+    } else {
+      currentYear = startYear;
+    }
+    actual_year = currentYear; // Sync actual_year with currentYear
+    updateVisualization(currentYear);
+    d3.select('#yearSlider').property('value', currentYear); // Update slider position
+  }, 1000); // Interval of 1 second
+}
+
+function stopAnimation() {
+  if (intervalId) clearInterval(intervalId);
+}
 
 // Call the main function to run the code
 main();
