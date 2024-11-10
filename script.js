@@ -58,7 +58,7 @@ function main() {
     // If animation is playing, reset it
     if (isPlaying) {
       stopAnimation();
-      d3.select('#playPauseButton').text('Animación por los años');
+      d3.select('#playPauseButton').text('▶️ Animación por los años ▶️');
       isPlaying = false;
     }
   });
@@ -68,12 +68,12 @@ function main() {
   playPauseButton.on('click', function () {
     isPlaying = !isPlaying;
     if (isPlaying) {
-      playPauseButton.text('Para la animación');
-      playPauseButton.style('background-color', '#36C2CE')
+      playPauseButton.text('⏸️ Parar animación ⏸️');
+      playPauseButton.style('background-color', '#36C2CE');
       startAnimation();
     } else {
-      playPauseButton.text('Animación por los años');
-      playPauseButton.style('background-color', '#CBDCEB')
+      playPauseButton.text('▶️ Animación por los años ▶️');
+      playPauseButton.style('background-color', '#CBDCEB');
       stopAnimation();
     }
   });
