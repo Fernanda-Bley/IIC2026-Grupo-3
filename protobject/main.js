@@ -475,11 +475,11 @@ function addMapEventListeners() {
 
     var audioSrc = '';
     if (prevalence >= 0 && prevalence < 18) {
-      audioSrc = 'audio-tos/tiny-cough.wav';
+      audioSrc = 'https://fernanda-bley.github.io/IIC2026-Grupo-3/audio-tos/tiny-cough.wav';
     } else if (prevalence >= 18 && prevalence < 35) {
-      audioSrc = 'audio-tos/medium-cough.mp3';
+      audioSrc = 'https://fernanda-bley.github.io/IIC2026-Grupo-3/audio-tos/medium-cough.mp3';
     } else if (prevalence >= 35 && prevalence <= 50) {
-      audioSrc = 'audio-tos/big-cough.mp3';
+      audioSrc = 'https://fernanda-bley.github.io/IIC2026-Grupo-3/audio-tos/big-cough.mp3';
     }
 
     if (audioSrc) {
@@ -670,17 +670,150 @@ function stopAnimation() {
   if (intervalId) clearInterval(intervalId);
 }
 
+function BetHighlight(orderValue) {
+  // Initialize the colorscale variable
+  let newColorscale;
+  var audioSrc = '';
+  const messageDiv = document.createElement('div');
+  messageDiv.textContent = " ";
+
+  // Update the color scale based on the order value
+  if (orderValue == 17) {
+    newColorscale = [
+      [0, '#FF8000'], // Orange for 0
+      [0.3499999, '#FF8000'], // Orange up to the orderValue
+      [0.35, '#FFFFFF'], // White for everything above orderValue
+      [1, '#FFFFFF'], // White for everything above orderValue
+    ];
+    if (!document.getElementById('percentageMessage')) {
+      // Create a new div element to display the message
+      messageDiv.id = 'percentageMessage'; // Set an ID for the message div
+      messageDiv.textContent = "¡¡Es porcentaje bajo!!";
+      messageDiv.style.color = '#FF8000'; // Optional: set the text color to orange
+      messageDiv.style.fontWeight = 'bold'; // Optional: make the text bold
+      messageDiv.style.marginTop = '20px'; // Optional: add some margin
+      messageDiv.style.position = 'absolute';
+      messageDiv.style.marginLeft = '500px';
+
+      // Append the message to the body or a specific container
+      document.body.appendChild(messageDiv);
+      
+      audioSrc = 'https://fernanda-bley.github.io/IIC2026-Grupo-3/audio-tos/tiny-cough.wav';
+      playAudio(audioSrc);
+    }
+  } else if (orderValue == 24) {
+    newColorscale = [
+      [0, '#FFFFFF'], // White for 0
+      [0.35999, '#FFFFFF'], // White for 0
+      [0.36, '#FF8000'], // Orange up to the orderValue
+      [0.68999, '#FF8000'], // Orange up to the orderValue
+      [0.69, '#FFFFFF'], // White for everything above orderValue
+      [1, '#FFFFFF'],
+    ];
+    if (!document.getElementById('percentageMessage')) {
+      messageDiv.id = 'percentageMessage'; // Set an ID for the message div
+      messageDiv.textContent = "¡¡Es porcentaje medio!!";
+      messageDiv.style.color = '#FF8000';
+      messageDiv.style.fontWeight = 'bold';
+      messageDiv.style.marginTop = '20px';
+      messageDiv.style.position = 'absolute';
+      messageDiv.style.marginLeft = '550px';
+      document.body.appendChild(messageDiv);
+
+      audioSrc = 'https://fernanda-bley.github.io/IIC2026-Grupo-3/audio-tos/medium-cough.mp3';
+      playAudio(audioSrc);
+    }
+  } else if (orderValue == 50) {
+    newColorscale = [
+      [0, '#FFFFFF'], // White for 0
+      [0.6999999, '#FFFFFF'], // White for 0
+      [0.70, '#FF8000'], // Orange up to the orderValue
+      [1, '#FF8000'], // Orange for everything above orderValue
+    ];
+    if (!document.getElementById('percentageMessage')) {
+      messageDiv.id = 'percentageMessage'; // Set an ID for the message div
+      messageDiv.textContent = "¡¡Es porcentaje alto!!";
+      messageDiv.style.color = '#FF8000';
+      messageDiv.style.fontWeight = 'bold';
+      messageDiv.style.marginTop = '20px';
+      messageDiv.style.position = 'absolute';
+      messageDiv.style.marginLeft = '500px';
+      document.body.appendChild(messageDiv);
+
+      audioSrc = 'https://fernanda-bley.github.io/IIC2026-Grupo-3/audio-tos/big-cough.mp3';
+      playAudio(audioSrc);
+    }
+  } else {
+    // Default colorscale if orderValue does not match any case
+    newColorscale = [
+      [0, '#CBDCEB'],
+      [0.25, '#36C2CE'],
+      [0.5 , '#3A6D8C'],
+      [0.75, '#003161'],
+      [1, '#0002A1'],
+    ];
+  }
+
+  // Prepare new plot data with updated color scale
+  const plotData = preparePlotData(); // Get the existing plot data
+  plotData[0].colorscale = newColorscale; // Update the colorscale
+
+  // Update zmin and zmax based on the order value
+  plotData[0].zmin = 0; // Minimum prevalence
+  plotData[0].zmax = 50; // Maximum prevalence based on orderValue
+
+  // Redraw the map with the updated data
+  const layout = prepareMapLayout(actual_year); // Get the current layout
+  renderMap(plotData, layout); // Render the updated map
+  
+  // Revert to the original colorscale after 10 seconds
+  setTimeout(() => {
+    const originalColorscale = [
+      [0, '#CBDCEB'],
+      [0.25, '#36C2CE'],
+      [0.5, '#3A6D8C'],
+      [0.75, '#003161'],
+      [1, '#0002A1'],
+    ];
+    plotData[0].colorscale = originalColorscale; // Reset the colorscale
+    renderMap(plotData, layout); // Render the map again with the original colorscale
+    
+    // Remove the messageDiv from the DOM
+    const existingMessageDiv = document.getElementById('percentageMessage');
+    if (existingMessageDiv) {
+      document.body.removeChild(existingMessageDiv);
+    }
+  }, 10000);
+}
+
+function playAudio(src) {
+  if (src) {
+    var audio = new Audio(src);
+    audio.volume = 1.0;
+    audio
+      .play()
+      .then(function () {
+        console.log('Audio playback started');
+      })
+      .catch(function (error) {
+        console.error('Audio playback failed:', error);
+      });
+  } else {
+    console.warn('No audio source selected');
+  }
+}
+
 
 // Escucha los datos recibidos desde Protobject
 Protobject.onReceived((order) => {
   if (order[0] == 17){
-    console.log("Seleccionamos: ", 17)
+    BetHighlight(order[0])
   }
   else if (order[0] == 24){
-    console.log("Seleccionamos: ", 24)
+    BetHighlight(order[0])
   }
   else if (order[0] == 50){
-    console.log("Seleccionamos: ", 50)
+    BetHighlight(order[0])
   }
 });
 
